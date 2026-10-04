@@ -1,240 +1,281 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HK.Finance — Financial Modeler</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>HK.Finance – Financial Model Builder</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--ink:#172033;--muted:#657084;--line:#e7ebf1;--bg:#f6f8fb;--card:#fff;--accent:#2f6fed;--green:#16a37a;--orange:#f59e0b;--red:#e34d59;--navy:#14213d}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(135deg,#f8fbff,#f7f8fb);color:var(--ink)}
-button,input,select{font:inherit}.top{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:20}.brand{font-weight:800;letter-spacing:-.03em;font-size:20px}.brand span{color:var(--accent)}.tag{font-size:12px;color:var(--muted);margin-left:10px}.wrap{max-width:1400px;margin:auto;padding:30px}.hero{display:grid;grid-template-columns:1.4fr .8fr;gap:20px;margin-bottom:22px}.heroCard,.upload,.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 35px rgba(24,43,75,.06)}.heroCard{padding:34px}.hero h1{font-size:42px;line-height:1.05;margin:0 0 14px;letter-spacing:-.045em}.hero p{color:var(--muted);font-size:16px;line-height:1.65;max-width:760px}.upload{padding:22px;border:1.5px dashed #c9d3e3;display:flex;flex-direction:column;justify-content:center}.drop{min-height:220px;border:2px dashed #cbd6e6;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;cursor:pointer;background:linear-gradient(180deg,#fff,#fbfdff)}.drop.drag{border-color:var(--accent);background:#f3f7ff}.drop strong{display:block;font-size:18px}.drop small{display:block;color:var(--muted);margin-top:8px}.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.btn{border:0;border-radius:11px;padding:11px 16px;cursor:pointer;font-weight:700}.primary{background:var(--accent);color:#fff}.soft{background:#edf3ff;color:#2459bf}.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}.tabs{display:flex;gap:8px;overflow:auto;margin:20px 0}.tab{white-space:nowrap;border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;color:#536075}.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}.section{display:none}.section.active{display:block}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.metric{padding:18px}.metric .label{color:var(--muted);font-size:12px}.metric .value{font-size:26px;font-weight:800;margin-top:7px}.metric .sub{font-size:12px;margin-top:6px;color:var(--muted)}.green{color:var(--green)}.red{color:var(--red)}.orange{color:var(--orange)}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px}.card{padding:20px}.card h3{margin:0 0 5px;font-size:16px}.muted{color:var(--muted)}.chartBox{height:310px}.tableWrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.table th:first-child,.table td:first-child{text-align:left}.table th{background:#f7f9fc;color:#536075}.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:end}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}.field input,.field select{border:1px solid var(--line);border-radius:9px;padding:9px 10px;background:#fff}.status{margin-top:10px;color:var(--muted);font-size:13px}.pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:#edf3ff;color:#2459bf;font-size:11px;font-weight:800}.notice{background:#fff8e8;border:1px solid #f6d98a;color:#75551a;padding:13px;border-radius:12px;font-size:13px;line-height:1.5}.footer{padding:30px 0 50px;color:var(--muted);font-size:12px;text-align:center}
-@media(max-width:900px){.hero,.two,.three{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.hero h1{font-size:34px}.wrap{padding:18px}.top{padding:0 18px}}
-@media(max-width:560px){.grid{grid-template-columns:1fr}.top{height:auto;padding:16px}.tag{display:none}}
-</style>
-</head>
-<body>
-<header class="top"><div><span class="brand">HK<span>.</span>Finance</span><span class="tag">Financial Modeling Intelligence</span></div><div class="pill" id="filePill">Awaiting company file</div></header>
-<main class="wrap">
-<section class="hero">
-  <div class="heroCard">
-    <div class="pill">A · DCF &nbsp; B · Contingent Valuation &nbsp; C · Performance</div>
-    <h1>Turn a company Excel file into a decision-ready financial model.</h1>
-    <p>Upload annual financials or structured market data. The engine maps the data, builds linked assumptions and calculations, runs scenario analysis, and presents valuation + performance insights in one clean workspace.</p>
-    <div class="btns"><button class="btn primary" onclick="document.getElementById('file').click()">Upload Excel</button><button class="btn ghost" onclick="loadDemo()">Load demo company</button></div>
-  </div>
-  <div class="upload">
-    <div class="drop" id="drop"><div><strong>Drop .xlsx / .xls here</strong><small>Future company files can follow the same row-label / year-column structure.</small><input id="file" type="file" accept=".xlsx,.xls,.csv" hidden></div></div>
-    <div class="status" id="status">No file loaded.</div>
-  </div>
-</section>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff;--card:#f7fbfd;--ink:#12263a;--mut:#5b6b7b;--line:#e3ecf2;--c1:#0ea5a4;--c2:#3b82f6;--c3:#f97316;--c4:#8b5cf6;--good:#16a34a;--bad:#e11d48}
 
-<div class="tabs">
-<button class="tab active" data-tab="overview">Overview</button><button class="tab" data-tab="dcf">A · DCF</button><button class="tab" data-tab="contingent">B · Contingent</button><button class="tab" data-tab="performance">C · Performance</button><button class="tab" data-tab="workbook">Workbook Blueprint</button>
-</div>
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 5vw;border-bottom:1px solid var(--line);background:linear-gradient(90deg,#e6fbf8,#e8f1ff 60%,#fff2e8)}
 
-<section id="overview" class="section active">
-  <div class="grid" id="metrics"></div>
-  <div class="two">
-    <div class="card"><h3>Revenue & EBITDA trend</h3><div class="chartBox"><canvas id="trendChart"></canvas></div></div>
-    <div class="card"><h3>Profitability profile</h3><div class="chartBox"><canvas id="marginChart"></canvas></div></div>
-  </div>
-  <div class="two">
-    <div class="card"><h3>Model outputs</h3><div id="outputCards"></div></div>
-    <div class="card"><h3>Model integrity</h3><div id="integrity"></div></div>
-  </div>
-</section>
+.logo{font-weight:800;font-size:22px;letter-spacing:-.5px}.logo b{color:var(--c1)}
+main{max-width:1200px;margin:auto;padding:20px 5vw 60px}
+.drop{border:2px dashed var(--c1);border-radius:16px;padding:36px;text-align:center;background:var(--card);cursor:pointer}
+.drop:hover{border-color:var(--c3)}.drop h2{margin:0 0 6px}.mut{color:var(--mut)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{padding:9px 16px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-weight:600}
+.tab.on{background:var(--c1);color:#fff;border-color:var(--c1)}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kpi small{color:var(--mut);display:block}.kpi b{font-size:24px}
+.kpi:nth-child(4n+1){border-top:3px solid var(--c1)}.kpi:nth-child(4n+2){border-top:3px solid var(--c2)}.kpi:nth-child(4n+3){border-top:3px solid var(--c3)}.kpi:nth-child(4n){border-top:3px solid var(--c4)}
+.ch{height:270px;position:relative}h3{margin:0 0 8px;font-size:16px}
+.btn{border:0;border-radius:10px;padding:8px 14px;font-weight:600;cursor:pointer;color:#fff;background:var(--c2)}.btn.x{background:var(--c1)}.btn.p{background:var(--c3)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.sc button{border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:600}.sc button.on{background:var(--c4);color:#fff}
+label.sl{display:block;font-size:13px;margin:6px 0}label.sl b{float:right}input[type=range]{width:100%;accent-color:var(--c1)}
+.note{border-left:4px solid var(--c3);padding:8px 12px;background:var(--card);border-radius:6px;font-size:13px;margin:10px 0}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card)}
+.up{color:var(--good)}.dn{color:var(--bad)}.pill{display:inline-block;padding:3px 10px;border-radius:99px;color:#fff;font-weight:700}
+.pane{display:none}.pane.on{display:block}#app{display:none}#err{color:var(--bad);margin-top:10px}
+@media print{header,.drop,.tabs,.bar,.sl,.sc{display:none!important}.pane{display:none}body[data-p=A] #pA,body[data-p=B] #pB,body[data-p=C] #pC,body[data-p=all] .pane{display:block!important}}
 
-<section id="dcf" class="section">
-  <div class="card"><h3>DCF Valuation Model</h3><p class="muted">Change the assumptions and all downstream values recalculate in the browser. The Excel export writes formulas into calculation/output cells rather than hard-coded results.</p>
-  <div class="controls">
-    <div class="field"><label>Scenario</label><select id="scenario"><option value="base">Base</option><option value="best">Best</option><option value="worst">Worst</option></select></div>
-    <div class="field"><label>Forecast years</label><input id="years" type="number" min="3" max="10" value="5"></div>
-    <div class="field"><label>Revenue growth</label><input id="growth" type="number" step=".01" value=".10"></div>
-    <div class="field"><label>EBITDA margin</label><input id="ebitdaMargin" type="number" step=".01" value=".20"></div>
-    <div class="field"><label>WACC</label><input id="wacc" type="number" step=".005" value=".11"></div>
-    <div class="field"><label>Terminal growth</label><input id="tg" type="number" step=".005" value=".04"></div>
-  </div>
-  <div class="grid" style="margin-top:16px" id="dcfMetrics"></div>
-  <div class="two"><div class="card"><h3>Forecast cash flows</h3><div class="tableWrap" id="dcfTable"></div></div><div class="card"><h3>Enterprise value bridge</h3><div class="chartBox"><canvas id="dcfChart"></canvas></div></div></div>
-  </div>
-</section>
+html,body{overflow-x:hidden}.card{min-width:0;box-shadow:0 1px 2px rgba(18,38,58,.05),0 6px 18px rgba(18,38,58,.04);transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,.12)}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr))}canvas{max-width:100%}.pane.on{animation:fd .35s ease}@keyframes fd{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero{text-align:center;padding:64px 10px 30px}.hero h1{font-size:clamp(34px,6vw,60px);margin:0;letter-spacing:-1.5px;background:linear-gradient(90deg,#2563eb,#0d9488,#7c3aed);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h2{margin:4px 0 12px;font-weight:600;color:var(--mut)}.hero p{max-width:560px;margin:0 auto 24px;font-size:17px}.ubtn{display:inline-block;background:linear-gradient(90deg,#2563eb,#0d9488);color:#fff;padding:14px 30px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(37,99,235,.28);transition:transform .2s}.ubtn:hover{transform:translateY(-2px)}
+#proc{display:none;max-width:460px;margin:50px auto;padding:24px}.st{opacity:.35;padding:5px 0;transition:.3s}.st.cur{opacity:1}.st.done{opacity:1;color:var(--c1)}.rdy{margin-top:12px;font-size:20px;font-weight:800;color:var(--good)}
+.dqg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.dqg small{color:var(--mut);display:block}.dqg b{font-size:14px}.rpt{display:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+@media print{.rpt{display:block!important;margin:10px 0}.card{break-inside:avoid;box-shadow:none}.ch{height:230px!important}.tw{overflow:visible}table{font-size:9px}th,td{padding:3px 4px}#hero,#proc,.btn,header{display:none!important}#app{display:block!important}.pane{break-before:page}}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;padding:8px 0;margin:10px 0}td.ctx small{color:var(--mut)}summary{cursor:pointer;padding:2px 0}details table td:last-child{text-align:left;white-space:normal}.kpi{cursor:help}#mxA td{text-align:center;line-height:1.25}#mxA small{color:var(--mut)}li{margin:4px 0}
+</style></head><body>
+<header><div class="logo">HK<b>.</b>Finance</div><div class="mut">Upload → Model → Export</div></header>
+<main>
+<div id="hero" class="hero"><h1>HK.Finance</h1><h2>Financial Model Builder</h2><p class="mut">Turn your company Excel into a professional financial analysis terminal.</p><label class="drop" id="drop" style="border:0;background:none;padding:0"><span class="ubtn">Upload Company Excel</span><input id="f" type="file" accept=".xlsx,.xlsm,.xls" hidden></label></div><div id="proc" class="card"></div><div id="err"></div>
+<div id="app">
+<div class="top"><div><h1 id="co" style="margin:6px 0 0"></h1><div class="mut" id="meta"></div></div><button class="btn p" id="re">↻ Upload another</button></div><div class="bar"><span>Company type detected – <b>please confirm</b>:</span><select id="ctype"><option value="op">Operating company (FCFF DCF)</option><option value="fin">Bank / NBFC / financial institution (Residual Income)</option><option value="ins">Insurance / other financial (equity-based)</option></select></div><div class="card" id="dq"></div>
+<div class="tabs"><button class="tab on" data-t="O">Overview</button><button class="tab" data-t="A">Valuation</button><button class="tab" data-t="B">Options</button><button class="tab" data-t="C">Performance & Ratios</button>
+<button class="btn p" id="xall" style="margin-left:auto">⬇ Results workbook (Excel)</button><button class="btn" id="pall">⬇ Full PDF report</button></div>
 
-<section id="contingent" class="section">
- <div class="card"><h3>Contingent Valuation — Black-Scholes</h3><p class="muted">Default use case: equity option / contingent claim. Inputs are linked to the company/market data where available and can be overridden.</p>
- <div class="controls">
-   <div class="field"><label>Spot price</label><input id="spot" type="number" value="100"></div>
-   <div class="field"><label>Strike</label><input id="strike" type="number" value="105"></div>
-   <div class="field"><label>Volatility</label><input id="vol" type="number" step=".01" value=".30"></div>
-   <div class="field"><label>Risk-free rate</label><input id="rf" type="number" step=".005" value=".065"></div>
-   <div class="field"><label>Expiry (years)</label><input id="expiry" type="number" step=".25" value="1"></div>
+<div class="rpt" id="rptH"></div><section class="pane on" id="pO"><div class="bar"><button class="btn x" data-x="O">⬇ Excel</button><button class="btn" data-p="O">⬇ PDF</button></div><div class="grid g4" id="kO"></div>
+<div class="grid g2" style="margin-top:14px"><div class="card"><h3>Valuation view</h3><div id="vO"></div><label class="sl">Verdict threshold ±<b id="thv"></b><input type="range" id="th" min="0.05" max="0.4" step="0.01"></label></div>
+<div class="card"><h3>Model health & valuation confidence</h3><div id="hO"></div></div>
+<div class="card"><h3>Key takeaways</h3><ul id="tO"></ul></div><div class="card"><h3>Valuation snapshot</h3><div class="ch"><canvas id="cO1"></canvas></div></div>
+<div class="card"><h3>Key strengths</h3><ul id="sO"></ul><small class="mut">Data-driven observations, not advice.</small></div><div class="card"><h3>Key risks / watch items</h3><ul id="rO"></ul><small class="mut">Data-driven observations, not advice.</small></div></div>
+<div class="card tw" style="margin-top:14px"><h3>What changed? Latest year vs previous year</h3><table id="wO"></table></div>
+<div class="card tw" style="margin-top:14px"><h3>Model checks</h3><table id="mO"></table></div>
+<div class="card tw" style="margin-top:14px"><h3>Data lineage – where each input came from</h3><table id="lO"></table></div>
+<div class="note"><b>Disclaimer:</b> This analysis is generated for educational and analytical purposes based on the data and assumptions provided. It is not investment advice, a recommendation, or a guarantee of future performance. Users should independently verify information and consult a qualified professional where appropriate.</div></section>
+<section class="pane" id="pA"><div class="bar"><button class="btn x" data-x="A">⬇ Excel</button><button class="btn" data-p="A">⬇ PDF</button><span class="sc" id="sc"></span></div>
+<div class="note" id="nA"></div>
+<div class="grid g4" id="kA"></div>
+<div class="grid g2" style="margin-top:14px"><div class="card"><h3>Assumptions (active scenario)</h3><div id="slA"></div></div>
+<div class="card"><h3>Fair value by scenario vs market price</h3><div class="ch"><canvas id="cA1"></canvas></div></div>
+<div class="card"><h3 id="hA2"></h3><div class="ch"><canvas id="cA2"></canvas></div></div>
+<div class="card"><h3 id="hA3"></h3><div class="ch"><canvas id="cA3"></canvas></div></div><div class="card"><h3 id="hA4"></h3><div class="ch"><canvas id="cA4"></canvas></div></div><div class="card tw"><h3>Scenario comparison</h3><table id="tS"></table></div>
+<div class="card tw"><h3 id="hMx">Sensitivity matrix – fair value / share (₹)</h3><table id="mxA"></table><small class="mut">Hover a cell for details. Every cell is a full model recalculation; ▲▼ shows upside vs price.</small></div>
+<div class="card"><h3>Goal seek</h3><label>Target fair value ₹ <input id="gsT" type="number" style="width:110px"></label> <button class="btn x" id="gsB">Solve</button><p class="mut" id="gsR">Finds the discount rate and terminal growth that make the model equal the target.</p></div>
+<div class="card tw"><h3>Assumptions & audit trail <small class="mut">(click a row)</small></h3><table id="asm"></table><div id="ad" class="note" style="display:none"></div></div></div>
+<details class="card" style="margin-top:14px"><summary><b>How was this valuation calculated?</b></summary><div class="tw" id="hwA"></div></details>
+<div class="card tw" style="margin-top:14px"><h3>Projection (₹ Cr)</h3><table id="tA"></table></div></section>
+
+<section class="pane" id="pB"><div class="bar"><button class="btn x" data-x="B">⬇ Excel</button><button class="btn" data-p="B">⬇ PDF</button><label>Option type <select id="cp"><option value="c">Call</option><option value="p">Put</option></select></label></div><div class="note" id="aB"></div>
  </div>
- <div class="grid" style="margin-top:16px" id="optionMetrics"></div>
- <div class="notice">For banks, NBFCs and insurers, do not force a standard FCFF DCF. The dashboard flags this limitation; a sector-specific valuation layer should be selected for production use.</div>
- </div>
-</section>
+<div class="grid g4" id="kB"></div>
+<div class="grid g2" style="margin-top:14px"><div class="card"><h3>Option inputs</h3><div id="slB"></div></div>
+<div class="card"><h3>Option value vs spot price</h3><div class="ch"><canvas id="cB1"></canvas></div></div><div class="card"><h3>Option value vs volatility</h3><div class="ch"><canvas id="cB2"></canvas></div></div><div class="card"><h3>Option value vs maturity</h3><div class="ch"><canvas id="cB3"></canvas></div></div></div></section>
 
-<section id="performance" class="section">
- <div class="grid" id="ratioMetrics"></div>
- <div class="two"><div class="card"><h3>Growth & returns</h3><div class="chartBox"><canvas id="ratioChart"></canvas></div></div><div class="card"><h3>Multi-year ratio table</h3><div class="tableWrap" id="ratioTable"></div></div></div>
-</section>
-
-<section id="workbook" class="section">
- <div class="card"><h3>Excel workbook architecture</h3><p class="muted">The export is structured to match a professional modeling workflow.</p>
- <div class="three">
-  <div><h3>Read Me</h3><p class="muted">Company, sheet guide, key assumptions, source notes and model limitations.</p></div>
-  <div><h3>Data</h3><p class="muted">Imported raw data with source/year fields and clean table formatting.</p></div>
-  <div><h3>Inputs & Scenarios</h3><p class="muted">Base / Best / Worst assumptions and a scenario selector.</p></div>
-  <div><h3>Model</h3><p class="muted">Formula-linked DCF, contingent valuation and performance calculations.</p></div>
-  <div><h3>Dashboard</h3><p class="muted">One-page KPI view with linked charts and selected scenario.</p></div>
-  <div><h3>Solver & Goal Seek</h3><p class="muted">Questions, target cells and instructions for Excel Goal Seek/Solver; the web engine also provides an equivalent sensitivity result.</p></div>
- </div>
- <div class="btns"><button class="btn primary" onclick="exportExcel()">Export formula-linked Excel</button><button class="btn soft" onclick="exportPDF()">Export PDF report</button></div>
- <div class="notice" style="margin-top:14px"><b>Macro note:</b> Browser libraries can generate formula-linked .xlsx reliably, but cannot safely create a genuine VBA <code>vbaProject.bin</code> from scratch. The production version should use an approved .xlsm template containing the VBA macro, then inject the generated model sheets/data into that template. This app is deliberately structured for that hand-off.</div>
- </div>
-</section>
-<div class="footer">Built by HK.Finance · Dynamic financial modeling interface · Educational / analytical use only</div>
-</main>
-
+<section class="pane" id="pC"><div class="bar"><button class="btn x" data-x="C">⬇ Excel</button><button class="btn" data-p="C">⬇ PDF</button></div>
+<div class="grid g4" id="kC"></div>
+<div class="grid g2" style="margin-top:14px">
+<div class="card"><h3>Sales & net profit (₹ Cr)</h3><div class="ch"><canvas id="cC1"></canvas></div></div>
+<div class="card"><h3>Returns: ROE & ROA</h3><div class="ch"><canvas id="cC2"></canvas></div></div>
+<div class="card"><h3>Margins & cost ratios</h3><div class="ch"><canvas id="cC3"></canvas></div></div>
+<div class="card"><h3>Leverage: Debt/Equity & Equity multiplier</h3><div class="ch"><canvas id="cC4"></canvas></div></div></div>
+<div class="grid g2" id="xC" style="margin-top:14px"></div><div class="card tw" style="margin-top:14px"><h3>Historical financials</h3><table id="tH"></table></div><div class="card tw" style="margin-top:14px"><h3>Ratio trends – ▲▼ direction; colour only where direction is unambiguous (hover for meaning)</h3><table id="tC"></table></div></section>
+<div class="rpt" id="rptF"></div></div></main>
 <script>
-const state={company:"Demo Company",years:[2021,2022,2023,2024,2025],data:{},charts:{}};
-const $=id=>document.getElementById(id);
-function num(v){const n=parseFloat(String(v??"").replace(/,/g,"").replace(/%/g,""));return Number.isFinite(n)?n:0}
-function fmt(v,d=1){return Number.isFinite(v)?v.toLocaleString("en-IN",{maximumFractionDigits:d}):"—"}
-function pct(v){return Number.isFinite(v)?(v*100).toFixed(1)+"%":"—"}
-function normal(s){return String(s??"").toLowerCase().replace(/[^a-z0-9]/g,"")}
-const aliases={
- revenue:["revenue","sales","turnover","total revenue","net sales"],
- ebitda:["ebitda","operating profit before depreciation"],
- ebit:["ebit","operating profit"],
- netincome:["net income","profit after tax","pat","net profit","profit"],
- cfo:["cash from operations","cash flow from operations","operating cash flow","net cash from operating activities"],
- capex:["capex","capital expenditure","purchase of property plant equipment","ppe purchases"],
- debt:["total debt","borrowings","debt"],
- cash:["cash and cash equivalents","cash & equivalents","cash"],
- equity:["shareholders equity","total equity","net worth","equity"],
- assets:["total assets","assets"],
- shares:["shares outstanding","equity shares","number of shares"],
- price:["share price","closing price","market price"]
-};
-function findKey(rows, names){const target=names.map(normal);for(const k of Object.keys(rows)){if(target.includes(normal(k)))return k}for(const k of Object.keys(rows)){const nk=normal(k);if(target.some(t=>nk.includes(t)||t.includes(nk)))return k}return null}
-function mapRows(rows, years){
- const out={}; for(const key in aliases){const rk=findKey(rows,aliases[key]);out[key]=rk?years.map(y=>num(rows[rk]?.[y])):years.map(()=>0)} return out;
-}
-function demo(){
- state.company="Aster Industries"; state.years=[2021,2022,2023,2024,2025];
- const y=state.years;
- state.data={revenue:[820,910,1030,1190,1370],ebitda:[148,165,191,228,274],ebit:[112,126,146,177,214],netincome:[63,74,86,103,129],cfo:[94,111,130,158,190],capex:[42,48,55,62,71],debt:[210,205,196,181,164],cash:[70,78,91,109,132],equity:[510,548,598,655,728],assets:[790,831,885,945,1014],shares:[10,10,10,10,10],price:[82,91,103,121,139]};
- $("status").textContent="Demo company loaded. Replace it with your own workbook anytime."; $("filePill").textContent=state.company; renderAll();
-}
-function parseWorkbook(file){
- const reader=new FileReader();reader.onload=e=>{
-  try{
-   const wb=XLSX.read(new Uint8Array(e.target.result),{type:"array",cellDates:true});
-   let best=null;
-   wb.SheetNames.forEach(sn=>{
-    const ws=wb.Sheets[sn], rows=XLSX.utils.sheet_to_json(ws,{defval:null});
-    if(rows.length && (!best||rows.length>best.rows.length))best={name:sn,rows};
-   });
-   if(!best) throw Error("No tabular sheet found.");
-   const raw=best.rows;
-   const keys=Object.keys(raw[0]||{});
-   let yearCols=keys.filter(k=>/^(19|20)\d{2}$/.test(String(k))).map(Number);
-   if(yearCols.length<3) yearCols=keys.map(k=>String(k)).filter(k=>/\d{4}/.test(k)).map(k=>Number(String(k).match(/\d{4}/)[0]));
-   yearCols=[...new Set(yearCols)].sort((a,b)=>a-b);
-   if(yearCols.length<3) throw Error("Need at least 3 year columns (e.g. 2021, 2022, 2023).");
-   const labelKey=keys.find(k=>!yearCols.includes(Number(k)))||keys[0];
-   const rows={}; raw.forEach(r=>{if(r[labelKey]!=null)rows[String(r[labelKey])]=Object.fromEntries(yearCols.map(y=>[y,r[String(y)]??r[y]]));});
-   state.company=(file.name||"Company").replace(/\.(xlsx|xls|csv)$/i,"");
-   state.years=yearCols; state.data=mapRows(rows,yearCols);
-   $("status").textContent=`Loaded ${file.name} · ${best.name} · ${yearCols.length} years.`;
-   $("filePill").textContent=state.company; renderAll();
-  }catch(err){$("status").textContent="Upload error: "+err.message}
- };reader.readAsArrayBuffer(file);
-}
-$("file").addEventListener("change",e=>e.target.files[0]&&parseWorkbook(e.target.files[0]));
-$("drop").addEventListener("dragover",e=>{e.preventDefault();$("drop").classList.add("drag")});
-$("drop").addEventListener("dragleave",()=>$("drop").classList.remove("drag"));
-$("drop").addEventListener("drop",e=>{e.preventDefault();$("drop").classList.remove("drag");const f=e.dataTransfer.files[0];if(f)parseWorkbook(f)});
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));b.classList.add("active");$(b.dataset.tab).classList.add("active")});
-function latest(k){return state.data[k]?.at(-1)||0}
-function cagr(k){const a=state.data[k]?.[0]||0,b=latest(k),n=state.years.length-1;return a>0&&b>0?Math.pow(b/a,1/n)-1:0}
-function assumptions(){
- let g=num($("growth").value),m=num($("ebitdaMargin").value),w=num($("wacc").value),tg=num($("tg").value);
- const s=$("scenario").value;
- if(s==="best"){g+=.04;m+=.03;w-=.01;tg+=.005}
- if(s==="worst"){g-=.04;m-=.03;w+=.015;tg-=.005}
- return {g,m,w,tg};
-}
-function dcfCalc(){
- const a=assumptions(), n=Math.max(3,Math.min(10,parseInt($("years").value)||5)), rev0=latest("revenue"), debt=latest("debt"),cash=latest("cash"),shares=Math.max(1,latest("shares"));
- let rev=rev0, pv=0, rows=[];
- for(let i=1;i<=n;i++){rev*=1+a.g;const ebitda=rev*a.m, ebit=ebitda*.78,tax=Math.max(0,ebit*.25),capex=rev*.045,deltaNwc=rev*.01,fcff=ebit-tax+ebitda-ebit-capex-deltaNwc;const disc=fcff/Math.pow(1+a.w,i);pv+=disc;rows.push({year:new Date().getFullYear()+i,rev,ebitda,fcff,disc})}
- const terminal=rows.at(-1).fcff*(1+a.tg)/(a.w-a.tg), tvpv=terminal/Math.pow(1+a.w,n), ev=pv+tvpv, eq=ev-debt+cash, per=eq/shares;
- return {a,n,rows,pv,tvpv,ev,eq,per,debt,cash,shares}
-}
-function bs(){
- const S=Math.max(.01,num($("spot").value)),K=Math.max(.01,num($("strike").value)),v=Math.max(.0001,num($("vol").value)),r=num($("rf").value),T=Math.max(.01,num($("expiry").value));
- const d1=(Math.log(S/K)+(r+v*v/2)*T)/(v*Math.sqrt(T)),d2=d1-v*Math.sqrt(T),N=x=>0.5*(1+erf(x/Math.sqrt(2))),call=S*N(d1)-K*Math.exp(-r*T)*N(d2),put=K*Math.exp(-r*T)*N(-d2)-S*N(-d1);
- return {S,K,v,r,T,d1,d2,call,put};
-}
-function erf(x){const sign=x<0?-1:1;x=Math.abs(x);const a1=.254829592,a2=-.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=.3275911,t=1/(1+p*x);return sign*(1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x))}
-function metricCard(label,value,sub="",cls=""){return `<div class="card metric"><div class="label">${label}</div><div class="value ${cls}">${value}</div><div class="sub">${sub}</div></div>`}
-function renderAll(){renderOverview();renderDCF();renderOption();renderPerformance()}
-function renderOverview(){
- const rev=latest("revenue"),ni=latest("netincome"),eb=latest("ebitda"),roe=latest("equity")?ni/latest("equity"):0;
- $("metrics").innerHTML=metricCard("Revenue",fmt(rev)+" cr",`CAGR ${pct(cagr("revenue"))}`)+metricCard("EBITDA",fmt(eb)+" cr",`Margin ${pct(rev?eb/rev:0)}`)+metricCard("Net Profit",fmt(ni)+" cr",`Margin ${pct(rev?ni/rev:0)}`)+metricCard("ROE",pct(roe),`Latest year`,roe>=.12?"green":"orange");
- const d=dcfCalc(),o=bs();
- $("outputCards").innerHTML=`<p><b>DCF equity value:</b> ₹${fmt(d.eq)} cr</p><p><b>DCF value/share:</b> ₹${fmt(d.per,2)}</p><p><b>Option call:</b> ₹${fmt(o.call,2)}</p><p><b>5-year revenue CAGR:</b> ${pct(cagr("revenue"))}</p>`;
- $("integrity").innerHTML=`<p>✓ ${state.years.length} historical periods mapped</p><p>✓ Formula-driven DCF / option / ratios</p><p>✓ Base / Best / Worst scenario controls</p><p>✓ Data → Inputs → Model → Output linkage</p><p>⚠ Genuine VBA .xlsm packaging requires a macro-enabled template.</p>`;
- drawTrend();drawMargins();
-}
-function renderDCF(){
- const d=dcfCalc();
- $("dcfMetrics").innerHTML=metricCard("Enterprise Value","₹"+fmt(d.ev)+" cr","PV of explicit + terminal value")+metricCard("Equity Value","₹"+fmt(d.eq)+" cr","EV - debt + cash")+metricCard("Value / Share","₹"+fmt(d.per,2),"Scenario: "+$("scenario").value)+metricCard("Terminal Value %",pct(d.tvpv/d.ev),"PV terminal / EV",d.tvpv/d.ev>.7?"orange":"green");
- $("dcfTable").innerHTML=`<table class="table"><thead><tr><th>Year</th><th>Revenue</th><th>EBITDA</th><th>FCFF</th><th>PV FCFF</th></tr></thead><tbody>${d.rows.map(r=>`<tr><td>${r.year}</td><td>${fmt(r.rev)}</td><td>${fmt(r.ebitda)}</td><td>${fmt(r.fcff)}</td><td>${fmt(r.disc)}</td></tr>`).join("")}</tbody></table>`;
- drawDCF(d);
-}
-function renderOption(){const o=bs();$("optionMetrics").innerHTML=metricCard("Call value","₹"+fmt(o.call,2),"Black-Scholes")+metricCard("Put value","₹"+fmt(o.put,2),"Black-Scholes")+metricCard("d1",fmt(o.d1,3),"Model statistic")+metricCard("d2",fmt(o.d2,3),"Model statistic")}
-function renderPerformance(){
- const rev=latest("revenue"),eb=latest("ebitda"),ni=latest("netincome"),eq=latest("equity"),assets=latest("assets"),debt=latest("debt");
- $("ratioMetrics").innerHTML=metricCard("Revenue CAGR",pct(cagr("revenue")),"Historical")+metricCard("EBITDA Margin",pct(eb/rev),"Latest year")+metricCard("ROA",pct(ni/assets),"Latest year")+metricCard("Debt / Equity",fmt(debt/eq,2)+"x","Latest year",debt/eq<1?"green":"orange");
- $("ratioTable").innerHTML=`<table class="table"><thead><tr><th>Year</th><th>Revenue growth</th><th>EBITDA margin</th><th>Net margin</th><th>ROE</th><th>Debt/Equity</th></tr></thead><tbody>${state.years.map((y,i)=>{const prev=i?state.data.revenue[i-1]:null;return `<tr><td>${y}</td><td>${prev?pct(state.data.revenue[i]/prev-1):"—"}</td><td>${pct(state.data.ebitda[i]/Math.max(1,state.data.revenue[i]))}</td><td>${pct(state.data.netincome[i]/Math.max(1,state.data.revenue[i]))}</td><td>${pct(state.data.netincome[i]/Math.max(1,state.data.equity[i]))}</td><td>${fmt(state.data.debt[i]/Math.max(1,state.data.equity[i]),2)}x</td></tr>`}).join("")}</tbody></table>`;
- drawRatio();
-}
-function destroy(k){if(state.charts[k])state.charts[k].destroy()}
-function chart(k,id,cfg){destroy(k);state.charts[k]=new Chart($(id),cfg)}
-function drawTrend(){chart("trend","trendChart",{type:"line",data:{labels:state.years,datasets:[{label:"Revenue",data:state.data.revenue,borderWidth:3,tension:.35},{label:"EBITDA",data:state.data.ebitda,borderWidth:3,tension:.35}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}})}
-function drawMargins(){chart("margin","marginChart",{type:"bar",data:{labels:state.years,datasets:[{label:"EBITDA margin %",data:state.years.map((_,i)=>state.data.ebitda[i]/Math.max(1,state.data.revenue[i])*100),borderRadius:8},{label:"Net margin %",data:state.years.map((_,i)=>state.data.netincome[i]/Math.max(1,state.data.revenue[i])*100),borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}})}
-function drawDCF(d){chart("dcf","dcfChart",{type:"doughnut",data:{labels:["Explicit FCFF PV","Terminal value PV"],datasets:[{data:[d.pv,d.tvpv]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}})}
-function drawRatio(){chart("ratio","ratioChart",{type:"line",data:{labels:state.years,datasets:[{label:"ROE %",data:state.years.map((_,i)=>state.data.netincome[i]/Math.max(1,state.data.equity[i])*100),borderWidth:3,tension:.3},{label:"Net margin %",data:state.years.map((_,i)=>state.data.netincome[i]/Math.max(1,state.data.revenue[i])*100),borderWidth:3,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}})}
-["scenario","years","growth","ebitdaMargin","wacc","tg","spot","strike","vol","rf","expiry"].forEach(id=>$(id).addEventListener("input",renderAll));
-function addSheet(wb,name,aoa){const ws=XLSX.utils.aoa_to_sheet(aoa);ws["!freeze"]={xSplit:1,ySplit:1};ws["!autofilter"]={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:Math.max(0,aoa.length-1),c:Math.max(0,(aoa[0]?.length||1)-1)}})};XLSX.utils.book_append_sheet(wb,ws,name)}
-function exportExcel(){
- const d=dcfCalc(),o=bs(),wb=XLSX.utils.book_new(),Y=state.years;
- addSheet(wb,"Read Me",[["HK.Finance Financial Model","Formula-linked financial model"],["Company",state.company],["Historical years",Y.join(", ")],["Models","A DCF | B Contingent Valuation | C Performance"],["Important","Banks/NBFCs/insurers require sector-specific valuation; standard FCFF DCF may be inappropriate."],["Sources","Uploaded company workbook; source field should be retained in production ingestion."]]);
- const data=[["Metric",...Y]];Object.entries(state.data).forEach(([k,v])=>data.push([k,...v]));addSheet(wb,"Data",data);
- addSheet(wb,"Inputs & Scenarios",[["Input","Base","Best","Worst","Selected"],["Scenario selector","base","best","worst","base"],["Revenue growth",0.10,0.14,0.06,"=B3"],["EBITDA margin",0.20,0.23,0.17,"=B4"],["WACC",0.11,0.10,0.125,"=B5"],["Terminal growth",0.04,0.045,0.035,"=B6"]]);
- const model=[["DCF Model","Year 1","Year 2","Year 3","Year 4","Year 5"],["Revenue","=Data!"+XLSX.utils.encode_cell({r:1,c:Y.length})+"*(1+'Inputs & Scenarios'!E3)"],["EBITDA","=B2*'Inputs & Scenarios'!E4"],["FCFF","=B3*0.78-(B3*0.78*25%)+B3-B3*0.78-B2*4.5%-B2*1%"],["PV FCFF","=B4/(1+'Inputs & Scenarios'!E5)^1"],["Terminal Value","=B4*(1+'Inputs & Scenarios'!E6)/('Inputs & Scenarios'!E5-'Inputs & Scenarios'!E6)"],["PV Terminal","=B6/(1+'Inputs & Scenarios'!E5)^5"],["Enterprise Value","=SUM(B5:F5)+F7"],["Equity Value","=B8-Data!"+XLSX.utils.encode_cell({r:7,c:Y.length})+"+Data!"+XLSX.utils.encode_cell({r:8,c:Y.length})]];
- for(let r=1;r<model.length;r++){for(let c=2;c<=6;c++){if(model[r][c-1]&&typeof model[r][c-1]==="string"&&model[r][c-1].startsWith("=")){let f=model[r][c-1];if(c>2)f=f.replace(/B/g,String.fromCharCode(64+c)).replace(/1\)/g,`${c-1})`);model[r][c]=f}}}
- addSheet(wb,"Model",model);
- addSheet(wb,"Contingent Valuation",[["Input","Value"],["Spot Price",o.S],["Strike",o.K],["Volatility",o.v],["Risk Free Rate",o.r],["Expiry",o.T],["Call Value","=B2*0.5-B3*EXP(-B5*B6)*0.5"],["Put Value","=B3*EXP(-B5*B6)*0.5-B2*0.5"]]);
- addSheet(wb,"Performance",[["Year","Revenue","EBITDA","Net Income","Equity","Debt","EBITDA Margin","Net Margin","ROE","Debt/Equity"],...Y.map((y,i)=>[y,`=Data!${XLSX.utils.encode_cell({r:1,c:i+1})}`,`=Data!${XLSX.utils.encode_cell({r:2,c:i+1})}`,`=Data!${XLSX.utils.encode_cell({r:4,c:i+1})}`,`=Data!${XLSX.utils.encode_cell({r:7,c:i+1})}`,`=Data!${XLSX.utils.encode_cell({r:6,c:i+1})}`,`=C${i+2}/B${i+2}`,`=D${i+2}/B${i+2}`,`=D${i+2}/E${i+2}`,`=F${i+2}/E${i+2}`])]);
- addSheet(wb,"Dashboard",[["HK.Finance — Financial Performance Dashboard"],["Company",state.company],["Scenario","='Inputs & Scenarios'!E2"],["DCF Equity Value","=Model!B9"],["DCF Value / Share","=Model!B9/Data!"+XLSX.utils.encode_cell({r:10,c:Y.length})],["Option Call","='Contingent Valuation'!B7"],["Latest Revenue","=Performance!B"+(Y.length+1)],["Latest EBITDA Margin","=Performance!G"+(Y.length+1)],["Latest ROE","=Performance!I"+(Y.length+1)]]);
- addSheet(wb,"Solver & Goal Seek",[["Question","Target / method","Result / instruction"],["Goal Seek","Find WACC that makes DCF value/share equal to market price","Use Excel Data → What-If Analysis → Goal Seek; set DCF value/share cell to latest market price by changing WACC."],["Solver","Maximize DCF equity value subject to WACC and terminal growth constraints","Use Solver: objective = DCF equity value; variable = WACC; constraints WACC >= 8%, terminal growth <= WACC - 1%."],["Scenario analysis","Base / Best / Worst","Change Inputs & Scenarios → Selected scenario; linked model outputs recalculate."]]);
- XLSX.writeFile(wb,`${state.company.replace(/\W+/g,"_")}_HK_Finance_Model.xlsx`);
-}
-function exportPDF(){
- const {jsPDF}=window.jspdf;const pdf=new jsPDF("p","mm","a4");const d=dcfCalc(),o=bs();
- pdf.setFontSize(22);pdf.text("HK.Finance — Financial Model Report",16,18);pdf.setFontSize(11);pdf.text(`Company: ${state.company}`,16,27);pdf.text(`Scenario: ${$("scenario").value}`,16,34);
- pdf.setFontSize(14);pdf.text("Key Outputs",16,47);pdf.setFontSize(11);
- const lines=[`Revenue: ₹${fmt(latest("revenue"))} cr`,`Revenue CAGR: ${pct(cagr("revenue"))}`,`EBITDA Margin: ${pct(latest("ebitda")/latest("revenue"))}`,`DCF Enterprise Value: ₹${fmt(d.ev)} cr`,`DCF Equity Value: ₹${fmt(d.eq)} cr`,`DCF Value / Share: ₹${fmt(d.per,2)}`,`Option Call Value: ₹${fmt(o.call,2)}`,`Option Put Value: ₹${fmt(o.put,2)}`];lines.forEach((x,i)=>pdf.text(x,16,57+i*8));
- pdf.setFontSize(14);pdf.text("Model Notes",16,133);pdf.setFontSize(10);pdf.text("Outputs are driven by linked assumptions and company data. Standard FCFF DCF should not be used blindly for banks, NBFCs and insurers.",16,142,{maxWidth:178});
- pdf.save(`${state.company.replace(/\W+/g,"_")}_HK_Finance_Report.pdf`);
-}
-loadDemo();
-</script>
-</body>
-</html>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const KEYS=[['Sales','Sales','PL'],['OtherMfr','Other Mfr. Exp','PL'],['Employee','Employee Cost','PL'],['SellAdmin','Selling and admin','PL'],['OtherExp','Other Expenses','PL'],['OtherInc','Other Income','PL'],['Depn','Depreciation','PL'],['Interest','Interest','PL'],['PBT','Profit before tax','PL'],['Tax','Tax','PL'],['NP','Net profit','PL'],['Div','Dividend Amount','PL'],['EqCap','Equity Share Capital','BS'],['Reserves','Reserves','BS'],['Borrow','Borrowings','BS'],['OthLiab','Other Liabilities','BS'],['TotAssets','Total','BS'],['Invest','Investments','BS'],['Cash','Cash & Bank','BS'],['Shares','Adjusted Equity Shares in Cr','DR'],['Price','PRICE:','PR'],['CFO','Cash from Operating Activity','CF'],['CFI','Cash from Investing Activity','CF'],['CFF','Cash from Financing Activity','CF']];
+const R=[['Sales Growth','{Sales}/{Sales@-1}-1','p'],['Net Profit Growth','{NP}/{NP@-1}-1','p'],['Borrowings Growth','{Borrow}/{Borrow@-1}-1','p'],['Opex (incl. provisions) / Sales','({OtherMfr}+{Employee}+{SellAdmin}+{OtherExp})/{Sales}','p'],['Interest / Sales','{Interest}/{Sales}','p'],['PBT Margin','{PBT}/{Sales}','p'],['PAT Margin','{NP}/{Sales}','p'],['EBITDA Margin','({PBT}+{Interest}+{Depn}-{OtherInc})/{Sales}','p'],['EBIT Margin','({PBT}+{Interest}-{OtherInc})/{Sales}','p'],['Net Worth (₹ Cr)','{EqCap}+{Reserves}','n'],['ROE','{NP}/((({EqCap}+{Reserves})+({EqCap@-1}+{Reserves@-1}))/2)','p'],['ROA','{NP}/(({TotAssets}+{TotAssets@-1})/2)','p'],['Asset Turnover (x)','{Sales}/(({TotAssets}+{TotAssets@-1})/2)','x'],['Debt / Equity (x)','{Borrow}/({EqCap}+{Reserves})','x'],['Equity Multiplier (x)','{TotAssets}/({EqCap}+{Reserves})','x'],['Interest Cover (x)','({PBT}+{Interest})/{Interest}','x'],['Cost of Funds','{Interest}/{Borrow}','p'],['Effective Tax Rate','{Tax}/{PBT}','p'],['Dividend Payout','{Div}/{NP}','p'],['EPS (₹)','{NP}/{Shares}','r'],['BVPS (₹)','({EqCap}+{Reserves})/{Shares}','r'],['P/E (x)','{Price}/({NP}/{Shares})','x'],['P/B (x)','{Price}/(({EqCap}+{Reserves})/{Shares})','x'],['CFO / Net Profit (x)','{CFO}/{NP}','x'],['Log Return','LN({Price}/{Price@-1})','p']];
+const GOODUP={'Sales Growth':1,'Net Profit Growth':1,'PAT Margin':1,'EBITDA Margin':1,'EBIT Margin':1,'PBT Margin':1,ROE:1,ROA:1,'Asset Turnover (x)':1,'Interest Cover (x)':1,'EPS (₹)':1,'BVPS (₹)':1,'Net Worth (₹ Cr)':1,'Opex (incl. provisions) / Sales':-1,'Debt / Equity (x)':-1,'Cost of Funds':-1,'Interest / Sales':-1};
+const RI=n=>R.findIndex(r=>r[0]==n)+2, KR=k=>KEYS.findIndex(x=>x[0]==k)+2;
+const PD=[['rf','Risk-free rate','p',.04,.10,.0025],['beta','Beta','n',.5,1.8,.05],['erp','Equity risk premium','p',.03,.08,.0025],['bg','Book value growth p.a.','p',.05,.30,.01],['shift','ROE shift (Yr-1 vs latest)','p',-.05,.05,.0025],['target','Terminal / target ROE','p',.08,.25,.005],['gt','Terminal growth','p',.02,.09,.0025]];
+const SN=['Worst','Base','Best'],SC=['#e11d48','#3b82f6','#16a34a'];
+let D,Y,RV,META,S,CH={},DN={},LIN={},LR=0,SHN='Data Sheet',HLT={},CHK=[],slA;
+const f=(v,t)=>v==null||!isFinite(v)?'–':t=='p'?(v*100).toFixed(1)+'%':t=='x'?v.toFixed(2)+'x':t=='r'?v.toFixed(2):Math.round(v).toLocaleString('en-IN');
+const ev=(t,i)=>{try{const e=t.replace(/\{(\w+)(?:@(-1))?\}/g,(m,k,o)=>{const j=o?i-1:i;return j<0?'NaN':'('+D[k][j]+')'});const v=Function('return '+e.replace(/LN/g,'Math.log'))();return isFinite(v)?v:null}catch(e){return null}};
+function parse(wb){let ws=wb.Sheets['Data Sheet'],a;SHN='Data Sheet';if(ws)a=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});else for(const n of wb.SheetNames){const t=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:null});if(t.some(r=>String(r[0]).startsWith('PROFIT & LOSS'))){a=t;SHN=n;break}}
+if(!a)throw Error('No Screener-style "Data Sheet" found in this file.');
+const col=a.map(r=>String(r[0]??'').trim()),ix=s=>col.findIndex(c=>c.startsWith(s)),A={PL:ix('PROFIT & LOSS'),BS:ix('BALANCE SHEET'),DR:ix('DERIVED'),PR:ix('PRICE'),CF:ix('CASH FLOW')};
+const row=(from,l)=>{for(let i=Math.max(from,0);i<a.length;i++)if(col[i]===l){LR=i+1;return a[i]}throw Error('Missing row: '+l)};
+D={};LIN={};KEYS.forEach(([k,l,s])=>{try{D[k]=row(A[s],l).slice(1,11).map(v=>+v||0);LIN[k]={sheet:SHN,row:LR}}catch(e){if(['CF','PR'].includes(s)||['Div','Cash','Invest','OtherMfr'].includes(k))D[k]=['OtherMfr','Invest'].includes(k)?Array(10).fill(0):null;else throw e}});
+Y=row(A.PL,'Report Date').slice(1,11).map(v=>new Date((v-25569)*864e5).getUTCFullYear());
+const m=l=>{try{return row(0,l)[1]}catch(e){return null}};
+META={name:m('COMPANY NAME')||'Company',price:+m('Current Price')||(D.Price?D.Price[9]:0),mcap:+m('Market Capitalization')||0,qtr:ix('Quarters')>=0&&a.slice(ix('Quarters')).some(r=>String(r[0]).trim()=='Sales'&&r[1]!=null)}}
+function build(){META.type=/insur|assurance/i.test(META.name)?'ins':(/bank|financ|finserv|nbfc|housing fin/i.test(META.name)||D.Borrow[9]/D.TotAssets[9]>.5)?'fin':'op';META.fin=META.type!='op';RV={};R.forEach(([l,t])=>RV[l]=Y.map((_,i)=>ev(t,i)));
+const sd=(RV['Log Return'].filter(v=>v!=null));const mu=sd.reduce((a,b)=>a+b,0)/sd.length;META.hv=Math.sqrt(sd.reduce((a,b)=>a+(b-mu)**2,0)/(sd.length-1))||.3;
+const P=[{rf:.07,beta:1.2,erp:.055,bg:.13,shift:-.02,target:.14,gt:.05},{rf:.07,beta:1.0,erp:.055,bg:.18,shift:0,target:.17,gt:.06},{rf:.07,beta:.9,erp:.055,bg:.22,shift:.015,target:.19,gt:.065}];
+const c5=Math.max(0,(D.Sales[9]/D.Sales[4])**.2-1),gb=Math.min(.2,Math.max(.04,c5*.6));S={sc:1,P,F:[{g:gb*.6,m:-.02,w:.125,gt:.035},{g:gb,m:0,w:.11,gt:.04},{g:gb*1.4,m:.015,w:.10,gt:.045}],th:.15,cp:'c',K:Math.round(META.price*1.05),T:1,vol:0,po:0}}
+const px=()=>S.po||META.price,L=i=>RV[i][9],sh=()=>D.Shares[9];
+function val(p){const ke=p.rf+p.beta*p.erp,roe0=L('ROE');let bv=L('Net Worth (₹ Cr)'),bv0=bv,sum=0,rows=[];
+for(let t=1;t<=5;t++){const roe=roe0+p.shift+(p.target-(roe0+p.shift))*t/5,e=roe*bv,ch=ke*bv,ri=e-ch,pv=ri/(1+ke)**t;sum+=pv;const b0=bv;bv*=1+p.bg;rows.push({t,roe,bv,e,ch,ri,pv})}
+const tv=ke>p.gt?(p.target-ke)*bv/(ke-p.gt):NaN,eq=bv0+sum+tv/(1+ke)**5,fair=eq/sh();return{ke,rows,sum,tv,eq,fair,up:fair/px()-1,pb:eq/bv0,bv0}}
+const N=x=>{const t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2),p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p};
+function bs(Sx,sgv,Tv){const q=(D.Div?D.Div[9]/sh():0)/px(),sg=sgv??(S.vol||META.hv),r=S.P[S.sc].rf,T=Tv??S.T,K=S.K,d1=(Math.log(Sx/K)+(r-q+sg*sg/2)*T)/(sg*Math.sqrt(T)),d2=d1-sg*Math.sqrt(T),c=Sx*Math.exp(-q*T)*N(d1)-K*Math.exp(-r*T)*N(d2),p=c-Sx*Math.exp(-q*T)+K*Math.exp(-r*T);const ph=Math.exp(-d1*d1/2)/Math.sqrt(2*Math.PI),t1=-Sx*Math.exp(-q*T)*ph*sg/(2*Math.sqrt(T)),thc=(t1-r*K*Math.exp(-r*T)*N(d2)+q*Sx*Math.exp(-q*T)*N(d1))/365,thp=(t1+r*K*Math.exp(-r*T)*N(-d2)-q*Sx*Math.exp(-q*T)*N(-d1))/365,rc=K*T*Math.exp(-r*T)*N(d2)/100,rp=-K*T*Math.exp(-r*T)*N(-d2)/100;return{thc,thp,rc,rp,deltaP:Math.exp(-q*T)*(N(d1)-1),c,p,d1,d2,q,sg,r,delta:Math.exp(-q*T)*N(d1),gamma:Math.exp(-q*T)*Math.exp(-d1*d1/2)/Math.sqrt(2*Math.PI)/(Sx*sg*Math.sqrt(T)),vega:Sx*Math.exp(-q*T)*Math.exp(-d1*d1/2)/Math.sqrt(2*Math.PI)*Math.sqrt(T)/100}}
+const mk=(id,type,data,opt={})=>{CH[id]?.destroy();const{plugins:pl={},...rest}=opt;CH[id]=new Chart($('#'+id),{type,data,options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},animation:{duration:500},...rest,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8}},...pl}}})};
+const cnt=el=>{const t=el.textContent,m=t.match(/-?[\d,]+(\.\d+)?/);if(!m)return;const n=parseFloat(m[0].replace(/,/g,'')),dec=(m[1]||'').length,s0=performance.now(),run=now=>{const p=Math.min((now-s0)/700,1),v=n*(1-Math.pow(1-p,3));el.textContent=t.replace(m[0],v.toLocaleString('en-IN',{minimumFractionDigits:dec,maximumFractionDigits:dec}));if(p<1)requestAnimationFrame(run)};requestAnimationFrame(run)};
+const kp=(id,arr)=>{$(id).innerHTML=arr.map(([a,b,c])=>`<div class="card kpi" title="${c||''}"><small>${a}</small><b>${b}</b></div>`).join('');if(!DN[id]){DN[id]=1;$$(id+' b').forEach(cnt)}};
+const yl=()=>Y.map(y=>'FY'+String(y).slice(2)),col4=['#2563eb','#0d9488','#7c3aed','#1e3a5f'];
+function sliders(id,defs,get,set,fmtF){$(id).innerHTML=defs.map(d=>`<label class="sl">${d[1]}<b id="${id.slice(1)}_${d[0]}"></b><input type="range" min="${d[3]}" max="${d[4]}" step="${d[5]}" data-k="${d[0]}"></label>`).join('');
+$$(id+' input').forEach(el=>{const d=defs.find(x=>x[0]==el.dataset.k);el.value=get(d[0]);$(`#${id.slice(1)}_${d[0]}`).textContent=fmtF(d,+el.value);el.oninput=()=>{set(d[0],+el.value);$(`#${id.slice(1)}_${d[0]}`).textContent=fmtF(d,+el.value);render()}})}
+const PAL=['#2563eb','#0d9488','#7c3aed','#1e3a5f','#0891b2'],RED='#e11d48',GRN='#16a34a';
+const FD=[['g','Revenue growth p.a.','p',0,.30,.005],['m','EBIT margin shift','p',-.08,.08,.0025],['w','WACC','p',.07,.16,.0025],['gt','Terminal growth','p',.02,.06,.0025]];
+const fv=(v,t)=>v==null||!isFinite(v)?'n/a':t=='n'?'₹'+f(v,'n'):t=='r'?'₹'+v.toFixed(2):f(v,t);
+function fval(p){const tax=Math.min(.35,Math.max(.15,RV['Effective Tax Rate'][9]||.25)),m0=RV['EBIT Margin'][9]||.1,dap=D.Depn[9]/D.Sales[9];let rev=D.Sales[9],rows=[],sum=0,fc=0;
+for(let t=1;t<=5;t++){const pr=rev;rev*=1+p.g;const ebit=rev*(m0+p.m),nopat=ebit*(1-tax),da=rev*dap,cx=1.2*da,dn=.05*(rev-pr);fc=nopat+da-cx-dn;const pv=fc/(1+p.w)**t;sum+=pv;rows.push({t,rev,ebit,nopat,da,cx,dn,fc,pv})}
+const tv=p.w>p.gt?fc*(1+p.gt)/(p.w-p.gt):NaN,pvtv=tv/(1+p.w)**5,ev=sum+pvtv,nd=D.Borrow[9]-(D.Cash?D.Cash[9]:0),eq=ev-nd,fair=eq/sh();return{rows,sum,tv,pvtv,ev,nd,eq,fair,up:fair/px()-1,ke:p.w,tax,m0,dap}}
+const mdl=p=>META.fin?val(p):fval(p),PXS=()=>META.fin?S.P:S.F,DFS=()=>META.fin?PD:FD;
+const TR=()=>META.fin?[['ROE','roe','p'],['Book value','bv','n'],['Earnings','e','n'],['Equity charge','ch','n'],['Residual income','ri','n'],['PV of RI','pv','n']]:[['Revenue','rev','n'],['EBIT','ebit','n'],['NOPAT','nopat','n'],['D&A','da','n'],['Capex','cx','n'],['Δ NWC','dn','n'],['FCFF','fc','n'],['PV of FCFF','pv','n']];
+const SUM=v=>META.fin?[['Book value (opening)',v.bv0],['PV of residual income',v.sum],['PV of terminal value',v.tv/(1+v.ke)**5],['Equity value',v.eq]]:[['PV of FCFF',v.sum],['PV of terminal value',v.pvtv],['Enterprise value',v.ev],['Less: net debt',-v.nd],['Equity value',v.eq]];
+const PCT={scales:{y:{ticks:{callback:v=>(v*100).toFixed(0)+'%'}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+f(c.parsed.y,'p')}}}};
+const dsl=(label,data,i,o={})=>({label,data,borderColor:PAL[i],backgroundColor:PAL[i],tension:.3,pointRadius:3,borderWidth:2,...o});
+const addCard=(host,id,title)=>{if(!$('#'+id))$(host).insertAdjacentHTML('beforeend',`<div class="card"><h3>${title}</h3><div class="ch"><canvas id="${id}"></canvas></div></div>`)};
+function renderA(){const fin=META.fin,PX=PXS(),V=PX.map(mdl),v=V[S.sc],cur=PX[S.sc],ke=fin?v.ke:cur.w;
+const call=v.up>S.th?['UNDERVALUED','var(--good)']:v.up<-S.th?['OVERVALUED','var(--bad)']:['FAIRLY VALUED','var(--c2)'];
+$('#nA').innerHTML=fin?'<b>Residual Income (Excess Return) method – used because this is a financial institution.</b> Debt is the raw material of lending, so free cash flow is not meaningful. Value = Book Value + PV of (ROE − Ke) × opening Book Value + PV of terminal residual income.':'<b>FCFF DCF – used because this is an operating company.</b> FCFF = NOPAT + D&amp;A − Capex − ΔNWC, discounted at WACC; Equity value = Enterprise value − net debt. Capex is assumed at 1.2× D&amp;A and ΔNWC at 5% of incremental revenue.';
+if(META.type=='ins')$('#nA').innerHTML+=' <b>Insurance:</b> embedded value and solvency data are not part of the uploaded format, so an equity-based residual income view is used – valuation methodology limited by available data.';$('#hA2').textContent=fin?'Book value & residual income':'FCFF forecast (₹ Cr)';$('#hA3').textContent=fin?'Sensitivity: fair value vs cost of equity':'Sensitivity: fair value vs WACC & terminal growth';$('#hA4').textContent=fin?'Value build-up (₹ Cr)':'Enterprise value bridge (₹ Cr)';
+kp('#kA',[['Fair value / share (₹)',f(v.fair,'n')],['Market price (₹)',f(px(),'n')],['Upside / (downside)',f(v.up,'p')],[fin?'Cost of equity (Ke)':'WACC',f(ke,'p')],[fin?'Implied P/B':'Enterprise value ₹ Cr',fin?f(v.pb,'x'):f(v.ev,'n')],['Verdict',`<span class="pill" style="background:${call[1]}">${call[0]}</span>`]]);
+mk('cA1','bar',{labels:SN,datasets:[{label:'Fair value ₹',data:V.map(x=>x.fair),backgroundColor:SC,borderRadius:6},{type:'line',label:'Market price',data:SN.map(_=>px()),borderColor:PAL[3],borderDash:[6,4],pointRadius:0}]});
+mk('cA2','bar',{labels:v.rows.map(r=>fe(r.t)),datasets:fin?[{label:'Book value',data:v.rows.map(r=>r.bv),backgroundColor:PAL[1]+'bb',borderRadius:4},{label:'Residual income',data:v.rows.map(r=>r.ri),backgroundColor:PAL[2],borderRadius:4}]:[{label:'FCFF',data:v.rows.map(r=>r.fc),backgroundColor:PAL[1],borderRadius:4},{label:'PV of FCFF',data:v.rows.map(r=>r.pv),backgroundColor:PAL[0],borderRadius:4}]});
+const sp=[-.02,-.01,0,.01,.02],pr={label:'Price',data:sp.map(_=>px()),borderColor:'#f97316',borderDash:[6,4],pointRadius:0};
+if(fin)mk('cA3','line',{labels:sp.map(d=>f(v.ke+d,'p')),datasets:[dsl('Fair value ₹',sp.map(d=>val({...cur,rf:cur.rf+d}).fair),0,{fill:true,backgroundColor:'#2563eb22'}),pr]});
+else mk('cA3','line',{labels:sp.map(d=>f(cur.w+d,'p')),datasets:[-.01,0,.01].map((g,i)=>dsl('g = '+f(cur.gt+g,'p'),sp.map(d=>fval({...cur,w:cur.w+d,gt:cur.gt+g}).fair),i)).concat([pr])});
+const SM=SUM(v);mk('cA4','bar',{labels:SM.map(x=>x[0]),datasets:[{label:'₹ Cr',data:SM.map(x=>x[1]),backgroundColor:SM.map((x,i)=>x[1]<0?RED:i==SM.length-1?PAL[3]:PAL[0]),borderRadius:6}]},{plugins:{legend:{display:false}}});
+const mrow=(l,fn)=>`<tr><td>${l}</td>${V.map((x,i)=>`<td>${fn(x,PX[i])}</td>`).join('')}</tr>`,r5=x=>x.rows[4];
+$('#tS').innerHTML='<tr><th>Metric</th>'+SN.map(n=>'<th>'+n+'</th>').join('')+'</tr>'+(fin?mrow('Book value growth',(x,p)=>f(p.bg,'p'))+mrow('Target ROE',(x,p)=>f(p.target,'p'))+mrow('Net income '+fe(5)+' (₹ Cr)',x=>f(r5(x).e,'n'))+mrow('Residual income '+fe(5)+' (₹ Cr)',x=>f(r5(x).ri,'n')):mrow('Revenue growth',(x,p)=>f(p.g,'p'))+mrow('Revenue '+fe(5)+' (₹ Cr)',x=>f(r5(x).rev,'n'))+mrow('EBIT margin '+fe(5),x=>f(r5(x).ebit/r5(x).rev,'p'))+mrow('FCFF '+fe(5)+' (₹ Cr)',x=>f(r5(x).fc,'n')))+mrow(fin?'Cost of equity':'WACC',x=>f(x.ke,'p'))+mrow('Terminal growth',(x,p)=>f(p.gt,'p'))+mrow('Equity value (₹ Cr)',x=>f(x.eq,'n'))+mrow('Fair value / share',x=>'₹'+f(x.fair,'n'))+mrow('Market price',x=>'₹'+f(px(),'n'))+mrow('Upside / (downside)',x=>`<span class="${x.up<0?'dn':'up'}">${x.up<0?'▼':'▲'} ${f(x.up,'p')}</span> <small>${x.up>S.th?'Undervalued':x.up<-S.th?'Overvalued':'Fairly valued'}</small>`);
+$('#tA').innerHTML='<tr><th>₹ Cr · forecast (base year FY'+String(Y[9]).slice(2)+'A)</th>'+v.rows.map(r=>'<th>'+fe(r.t)+'</th>').join('')+'</tr>'+TR().map(([a,k,t])=>`<tr><td>${a}</td>${v.rows.map(r=>`<td class="${r[k]<0?'dn':''}">${f(r[k],t)}</td>`).join('')}</tr>`).join('')+`<tr><td colspan="6"><b>${SM.map(x=>x[0]+': '+f(x[1],'n')).join(' · ')}</b></td></tr>`}
+function renderB(){const b=bs(px()),isC=S.cp=='c',nm=isC?'Call':'Put',g=(x,sg,T)=>{const o=bs(x,sg,T);return isC?o.c:o.p},ax=t=>({scales:{x:{title:{display:true,text:t}},y:{title:{display:true,text:nm+' value (₹)'}}}});
+kp('#kB',[[nm+' value (₹)',f(isC?b.c:b.p,'r'),'Theoretical Black-Scholes value, not a market quote. Call '+f(b.c,'r')+' | Put '+f(b.p,'r')],['Delta',(isC?b.delta:b.deltaP).toFixed(3),'Approximate sensitivity of option value to a change in underlying price.'],['Gamma',b.gamma.toFixed(5),'Sensitivity of Delta to underlying price.'],['Vega (₹ per 1% vol)',b.vega.toFixed(2),'Sensitivity to volatility.'],['Theta (₹ per day)',(isC?b.thc:b.thp).toFixed(3),'Sensitivity to passage of time.'],['Rho (₹ per 1% rate)',(isC?b.rc:b.rp).toFixed(3),'Sensitivity to interest rate.'],['Volatility σ (annual)',f(b.sg,'p'),'Annualised standard deviation of returns.'],['Risk-free rate r',f(b.r,'p')],['Dividend yield q',f(b.q,'p')],['Strike K (₹)',S.K.toLocaleString('en-IN')],['Maturity T (years)',S.T.toFixed(2)]]);
+$('#aB').innerHTML=`<b>Model:</b> Black-Scholes-Merton, European ${nm.toLowerCase()}, continuous dividend yield. Estimates the theoretical value from price, strike, maturity, volatility, rate and yield. <b>Pricing date:</b> ${new Date().toLocaleDateString('en-IN')}. <b>Spot:</b> ${S.po?'user override':'price in uploaded file'}. <b>Volatility source:</b> ${S.vol?'user override':'historical stdev of '+RV['Log Return'].filter(v=>v!=null).length+' annual log returns of the uploaded price series'}. <b>Risk-free source:</b> scenario risk-free input (user assumption, not a live quote). <b>Dividend yield source:</b> latest dividend ÷ adjusted shares ÷ spot. Theoretical value, not a market quote.`;
+const xs=[...Array(21)].map((_,i)=>px()*(.6+.04*i));
+mk('cB1','line',{labels:xs.map(x=>Math.round(x)),datasets:[dsl(nm+' (Black-Scholes)',xs.map(x=>g(x)),1),dsl('Intrinsic value at expiry',xs.map(x=>Math.max(isC?x-S.K:S.K-x,0)),0,{borderDash:[5,4],pointRadius:0}),{label:'Current spot',data:xs.map((x,i)=>i==10?g(px()):null),borderColor:RED,backgroundColor:RED,pointRadius:7,showLine:false}]},ax('Spot price (₹)'));
+const vs=[...Array(15)].map((_,i)=>.1+.05*i);mk('cB2','line',{labels:vs.map(v=>f(v,'p')),datasets:[dsl(nm+' (Black-Scholes)',vs.map(v=>g(px(),v)),1)]},ax('Volatility (annual)'));
+const ts=[...Array(12)].map((_,i)=>.25*(i+1));mk('cB3','line',{labels:ts.map(t=>t.toFixed(2)),datasets:[dsl(nm+' (Black-Scholes)',ts.map(t=>g(px(),undefined,t)),1)]},ax('Time to maturity (years)'))}
+function renderC(){const r=l=>RV[l][9],R_=l=>RV[l];
+kp('#kC',[['Sales',fv(D.Sales[9],'n')+' Cr'],['Net profit',fv(D.NP[9],'n')+' Cr'],['ROE (avg equity)',f(r('ROE'),'p')],['ROA (avg assets)',f(r('ROA'),'p')],['Debt / Equity',f(r('Debt / Equity (x)'),'x')],['P/B',f(r('P/B (x)'),'x')],['EPS',fv(r('EPS (₹)'),'r')],['BVPS',fv(r('BVPS (₹)'),'r')],['Sales growth',f(r('Sales Growth'),'p')],['Interest cover',f(r('Interest Cover (x)'),'x')]]);
+mk('cC1','bar',{labels:yl(),datasets:[{label:'Sales',data:D.Sales,backgroundColor:PAL[0],borderRadius:4},{label:'Net profit',data:D.NP,backgroundColor:PAL[1],borderRadius:4}]});
+mk('cC2','line',{labels:yl(),datasets:[dsl('ROE',R_('ROE'),0),dsl('ROA',R_('ROA'),1)]},PCT);
+mk('cC3','line',{labels:yl(),datasets:[dsl('PAT Margin',R_('PAT Margin'),1),dsl('Opex (incl. provisions) / Sales',R_('Opex (incl. provisions) / Sales'),2),dsl('Interest / Sales',R_('Interest / Sales'),3)]},PCT);
+mk('cC4','line',{labels:yl(),datasets:[dsl('Debt / Equity (x)',R_('Debt / Equity (x)'),0),dsl('Equity Multiplier (x)',R_('Equity Multiplier (x)'),2,{yAxisID:'y1'})]},{scales:{y1:{position:'right',grid:{drawOnChartArea:false}}}});
+const X='#xC';addCard(X,'cC5','Revenue growth & net profit growth');mk('cC5','line',{labels:yl(),datasets:[dsl('Sales Growth',R_('Sales Growth'),0),dsl('Net Profit Growth',R_('Net Profit Growth'),1)]},PCT);
+addCard(X,'cC6','EBITDA / EBIT / PAT margins');mk('cC6','line',{labels:yl(),datasets:[dsl('EBITDA Margin',R_('EBITDA Margin'),0),dsl('EBIT Margin',R_('EBIT Margin'),2),dsl('PAT Margin',R_('PAT Margin'),1)]},PCT);
+if(D.CFO){addCard(X,'cC7','Cash flow: CFO / CFI / CFF (₹ Cr)');mk('cC7','bar',{labels:yl(),datasets:[{label:'CFO',data:D.CFO,backgroundColor:PAL[0],borderRadius:3},{label:'CFI',data:D.CFI,backgroundColor:PAL[2],borderRadius:3},{label:'CFF',data:D.CFF,backgroundColor:PAL[1],borderRadius:3}]});
+addCard(X,'cC11','Cash flow quality: CFO / Net profit (x)');mk('cC11','bar',{labels:yl(),datasets:[{label:'CFO / Net profit',data:R_('CFO / Net Profit (x)'),backgroundColor:R_('CFO / Net Profit (x)').map(v=>v<0?RED:GRN),borderRadius:3}]},{plugins:{legend:{display:false}}})}
+addCard(X,'cC8','EPS & BVPS (₹)');mk('cC8','bar',{labels:yl(),datasets:[{label:'EPS',data:R_('EPS (₹)'),backgroundColor:PAL[1],borderRadius:3},{label:'BVPS',data:R_('BVPS (₹)'),backgroundColor:PAL[0],borderRadius:3}]});
+if(D.Price){addCard(X,'cC9','P/E trend & share price');mk('cC9','line',{labels:yl(),datasets:[dsl('P/E (x)',R_('P/E (x)'),2),dsl('Share price ₹',D.Price,0,{yAxisID:'y1'})]},{scales:{y1:{position:'right',grid:{drawOnChartArea:false}}}})}
+addCard(X,'cC10','Revenue vs profitability (PAT margin)');mk('cC10','scatter',{datasets:[{label:'Fiscal years',data:Y.map((y,i)=>({x:D.Sales[i],y:R_('PAT Margin')[i],fy:y})),backgroundColor:PAL[2],pointRadius:6}]},{interaction:{mode:'nearest',intersect:true},scales:{y:{ticks:{callback:v=>(v*100).toFixed(0)+'%'}},x:{title:{display:true,text:'Sales ₹ Cr'}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`FY${String(c.raw.fy).slice(2)}: sales ₹${f(c.raw.x,'n')} Cr, margin ${f(c.raw.y,'p')}`}}}});
+const HK=[['Sales','n'],['NP','n'],['PBT','n'],['Interest','n'],['TotAssets','n'],['Borrow','n'],['CFO','n'],['CFI','n'],['CFF','n'],['Price','r']],HL={Sales:'Sales',NP:'Net profit',PBT:'Profit before tax',Interest:'Interest',TotAssets:'Total assets',Borrow:'Borrowings',CFO:'Cash from operations',CFI:'Cash from investing',CFF:'Cash from financing',Price:'Share price'};
+const hrow=(a,vals,t)=>`<tr><td>${a}</td>${vals.map(v=>`<td class="${v<0?'dn':''}">${fv(v,t)}</td>`).join('')}</tr>`;
+$('#tH').innerHTML='<tr><th>₹ Cr</th>'+yl().map(y=>'<th>'+y+'</th>').join('')+'</tr>'+HK.map(([k,t])=>hrow(HL[k],D[k]||Array(10).fill(null),t)).join('')+hrow('Net worth',R_('Net Worth (₹ Cr)'),'n')+hrow('EPS (₹)',R_('EPS (₹)'),'r')+hrow('BVPS (₹)',R_('BVPS (₹)'),'r');
+$('#tC').innerHTML='<tr><th>Ratio</th>'+yl().map(y=>'<th>'+y+'</th>').join('')+'</tr>'+R.filter(x=>x[0]!='Log Return').map(([l,,t])=>`<tr><td title="${WHY[l]||''}">${l}${WHY[l]?' ⓘ':''}</td>${RV[l].map((v,i)=>{const g=GOODUP[l],p=RV[l][i-1];let c='',ar='';if(i&&v!=null&&p!=null&&Math.abs(v-p)>1e-9){ar=v>p?' ▲':' ▼';c=g?((v>p)==(g>0)?'up':'dn'):'ctx'}return`<td class="${c}" title="${c=='up'?'Positive':c=='dn'?'Negative':c=='ctx'?'Context-dependent':''}">${fv(v,t)}<small>${ar}</small></td>`}).join('')}</tr>`).join('')}
+const obs=()=>{const o=[],r=l=>RV[l][9],cg=a=>(a[9]/a[4])**.2-1,v=mdl(PXS()[S.sc]);o.push(`Sales grew at a ${f(cg(D.Sales),'p')} and net profit at a ${f(cg(D.NP),'p')} five-year CAGR.`);o.push(`ROE is ${f(r('ROE'),'p')} and ROA ${f(r('ROA'),'p')} (average balances); PAT margin is ${f(r('PAT Margin'),'p')}.`);o.push(`Debt/Equity is ${f(r('Debt / Equity (x)'),'x')}, equity multiplier ${f(r('Equity Multiplier (x)'),'x')}, interest cover ${f(r('Interest Cover (x)'),'x')}.`);o.push(`${SN[S.sc]}-case fair value is ₹${f(v.fair,'n')} against a market price of ₹${f(px(),'n')} (${f(v.up,'p')}); the stock trades at ${f(r('P/B (x)'),'x')} book and ${f(r('P/E (x)'),'x')} earnings.`);if(D.CFO&&META.fin)o.push('Operating cash flow is structurally negative for lenders because loan growth is booked as an operating outflow; judge cash quality through asset quality and funding mix.');return o};
+function dq(){let fill=0;KEYS.forEach(([k])=>{if(D[k])fill+=D[k].filter(v=>v!==0).length});$('#dq').innerHTML='<h3>Data Quality</h3><div class="dqg">'+[['Years detected',Y.filter(y=>y>1990).length],['Latest FY','FY'+String(Y[9]).slice(2)],['Quarterly data',META.qtr?'Available':'Not found'],['Cash flow',D.CFO?'Available':'Missing'],['Price history',D.Price?'Available':'Missing'],['Completeness',f(fill/(KEYS.length*10),'p')],['Company type',{op:'Operating company',fin:'Financial institution',ins:'Insurance / other financial'}[META.type]],['Valuation method',META.fin?'Residual Income':'FCFF DCF'],['Data quality',HLT.dq],['Model health',HLT.mh]].map(([a,b])=>`<div><small>${a}</small><b>${b}</b></div>`).join('')+'</div>'}
+
+const fe=t=>'FY'+String(Y[9]+t).slice(2)+'E',cagr=(a,n=5)=>a&&a[9-n]>0&&a[9]>0?(a[9]/a[9-n])**(1/n)-1:null,avg=a=>{const x=(a||[]).filter(v=>v!=null&&isFinite(v));return x.length?x.reduce((p,c)=>p+c,0)/x.length:null};
+const WHY={'ROE':'Return on average shareholders\' equity – how efficiently equity capital earns profit.','ROA':'Return on average assets – profit per rupee of assets.','Debt / Equity (x)':'Leverage. Higher means more borrowing; normal for lenders, a risk signal for industrials.','P/E (x)':'Price paid per ₹1 of earnings. High can reflect growth expectations or expensive valuation.','P/B (x)':'Price relative to book value; read together with ROE.','Interest Cover (x)':'How many times profit before interest covers interest cost.','PAT Margin':'Net profit as a share of sales.','EBITDA Margin':'Operating profitability before interest-free items; interest is added back.','EBIT Margin':'Profit before interest and tax as a share of sales.','CFO / Net Profit (x)':'Cash conversion of accounting profit. Structurally negative for growing lenders.','Cost of Funds':'Interest paid relative to borrowings.','Effective Tax Rate':'Tax as a share of pre-tax profit.','Dividend Payout':'Share of profit distributed as dividends.','EPS (₹)':'Net profit per share.','BVPS (₹)':'Book equity per share.','Equity Multiplier (x)':'Assets per rupee of equity – a leverage measure.'};
+const comp=()=>{let fill=0;KEYS.forEach(([k])=>{if(D[k])fill+=D[k].filter(v=>v!==0).length});return fill/(KEYS.length*10)};
+function checks(){const c=[],n=Y.length,NW=RV['Net Worth (₹ Cr)'],P=(name,ok,det)=>c.push({name,st:ok===null?'N/A':ok?'Pass':'Warning',det}),yy=y=>'FY'+String(y).slice(2);
+const yv=Y.every(y=>y>1990)&&new Set(Y).size==n&&Y.every((y,i)=>!i||y>Y[i-1]);P('Report dates valid, unique and ascending',yv,yv?`${n} annual periods ${yy(Y[0])}–${yy(Y[n-1])}`:'Invalid, duplicate or unordered dates');
+let g=0,gy=0;Y.forEach((y,i)=>{const d=Math.abs(D.TotAssets[i]-(D.EqCap[i]+D.Reserves[i]+D.Borrow[i]+D.OthLiab[i]))/(Math.abs(D.TotAssets[i])||1);if(d>g){g=d;gy=y}});P('Balance sheet: Assets ≈ Liabilities + Equity',g<.01,`Largest gap ${f(g,'p')}${g>=.01?' ('+yy(gy)+')':''}`);
+if(D.Div){let w=0,wy=0;for(let i=1;i<n;i++){const d=Math.abs(NW[i]-(NW[i-1]+D.NP[i]-D.Div[i]))/(Math.abs(NW[i])||1);if(d>w){w=d;wy=Y[i]}}P('Equity roll-forward: opening + profit − dividends ≈ closing',w<.1,`Largest gap ${f(w,'p')}${w>=.1?' ('+yy(wy)+'); may reflect share issues, bonus or other adjustments':''}`)}else P('Equity roll-forward',null,'Dividend data not detected');
+if(D.CFO&&D.Cash){let w=0,wy=0;for(let i=1;i<n;i++){const fl=D.CFO[i]+D.CFI[i]+D.CFF[i],tol=1+.02*Math.max(Math.abs(D.CFO[i]),Math.abs(D.CFI[i]),Math.abs(D.CFF[i])),d=Math.abs(D.Cash[i]-D.Cash[i-1]-fl)/tol;if(d>w){w=d;wy=Y[i]}}P('Cash flow: opening cash + CFO + CFI + CFF ≈ closing cash',w<=1,w<=1?'Reconciles within tolerance':'Gap beyond tolerance in '+yy(wy))}else P('Cash flow reconciliation',null,'Cash flow or cash balance not detected');
+if(META.mcap&&META.price&&D.Shares[9]){const d=Math.abs(META.mcap-META.price*D.Shares[9])/META.mcap;P('Market cap ≈ price × shares',d<.05,'Difference '+f(d,'p'))}else P('Market cap ≈ price × shares',null,'Market cap, price or share count missing');
+const sj=Y.filter((_,i)=>i&&D.Shares[i-1]&&Math.abs(D.Shares[i]/D.Shares[i-1]-1)>.5);P('Share count stable (no >50% jumps)',!sj.length,sj.length?'Jump in '+sj.map(yy).join(', ')+' – verify splits/bonus':'No unexpected jumps');
+const rj=Y.filter((_,i)=>i&&D.Sales[i-1]>0&&Math.abs(D.Sales[i]/D.Sales[i-1]-1)>1);P('No revenue jumps >100% YoY',!rj.length,rj.length?'Check '+rj.map(yy).join(', '):'None');
+P('Revenue and equity positive',D.Sales.every(v=>v>0)&&NW.every(v=>v>0),'Negative or zero values limit ratios and valuation');
+const ms=KEYS.filter(([k])=>!D[k]).map(k=>k[1]);P('All expected line items present',!ms.length,ms.length?'Not found: '+ms.join(', '):'All detected');
+CHK=c;const w=c.filter(x=>x.st=='Warning').length,cp=comp(),bad=!(D.Shares[9]>0)||!(META.price>0)||!isFinite(mdl(PXS()[S.sc]).fair);
+HLT={w,cp,dq:cp>=.95&&!w?'Excellent':cp>=.85&&w<=1?'Good':cp>=.7?'Needs Review':'Poor',mh:bad?'Critical':w?'Warning':'Healthy',bad}}
+function conf(){const PX=PXS(),V=PX.map(mdl),cur=PX[S.sc],sp=(V[2].fair-V[0].fair)/Math.abs(V[1].fair),sn=META.fin?[val({...cur,rf:cur.rf-.01}).fair,val({...cur,rf:cur.rf+.01}).fair]:[fval({...cur,w:cur.w-.01}).fair,fval({...cur,w:cur.w+.01}).fair],sw=Math.abs(sn[0]-sn[1])/Math.abs(mdl(cur).fair);
+const t=[[HLT.cp>=.9,'historical data is largely complete','data has gaps'],[!!D.CFO,'cash flow detected','no cash flow data'],[!!D.Price&&META.price>0,'market price available','market price missing'],[D.Shares[9]>0,'share count available','share count missing'],[Y.length>=8,'long history','short history'],[isFinite(sp)&&sp<.8,'scenario range is moderate','scenario range is wide'],[isFinite(sw)&&sw<.35,'moderate sensitivity to the discount rate','valuation is highly sensitive to the discount rate']],pts=t.filter(x=>x[0]).length,lv=pts>=6?'High':pts>=4?'Medium':'Low';return{lv,sw,sp,txt:lv+' confidence — '+t.map(x=>x[0]?x[1]:x[2]).join('; ')+'.'}}
+function sr(){const St=[],Rk=[],r=l=>RV[l],a9=l=>r(l)[9],a8=l=>r(l)[8],pr=avg(r('ROE').slice(5,8)),cf=conf(),v=mdl(PXS()[S.sc]);
+if(a9('ROE')!=null&&pr!=null)(a9('ROE')>pr?St:Rk).push(`ROE ${f(a9('ROE'),'p')} is ${a9('ROE')>pr?'above':'below'} its prior three-year average of ${f(pr,'p')}.`);
+if(a9('PAT Margin')!=null&&a8('PAT Margin')!=null)(a9('PAT Margin')>=a8('PAT Margin')?St:Rk).push(`PAT margin ${a9('PAT Margin')>=a8('PAT Margin')?'improved':'declined'} from ${f(a8('PAT Margin'),'p')} to ${f(a9('PAT Margin'),'p')}.`);
+const gr=r('Net Profit Growth').filter(x=>x!=null);if(gr.length>3){gr.every(x=>x>0)?St.push('Net profit grew in every year of the available history.'):Rk.push(`Net profit fell in ${gr.filter(x=>x<=0).length} of ${gr.length} years – earnings are not uniformly growing.`)}
+const d9=a9('Debt / Equity (x)'),d8=a8('Debt / Equity (x)');if(d9!=null&&d8!=null){if(d9<d8)St.push(`Debt/Equity declined from ${f(d8,'x')} to ${f(d9,'x')}.`);else if(d9>d8*1.1)Rk.push(`Debt/Equity rose from ${f(d8,'x')} to ${f(d9,'x')}.`)}
+if(D.CFO&&!META.fin){const c=a9('CFO / Net Profit (x)');if(c!=null)(c>=1?St:Rk).push(`CFO/Net profit is ${f(c,'x')}${c>=1?' – cash conversion supports reported profit.':' – weaker cash conversion than accounting profit.'}`)}
+const ic=a9('Interest Cover (x)');if(ic!=null&&ic<1.5)Rk.push(`Interest cover is only ${f(ic,'x')}.`);
+if(cf.sw>=.35)Rk.push(`Valuation is highly sensitive to the discount rate (±1% moves fair value by about ${f(cf.sw/2,'p')}).`);
+if(v.up<-S.th)Rk.push(`${SN[S.sc]}-case fair value is below the market price under the current assumptions.`);else if(v.up>S.th)St.push(`${SN[S.sc]}-case fair value is above the market price (model- and assumption-dependent).`);
+return[St.length?St:['None identified from the available data.'],Rk.length?Rk:['None identified from the available data.']]}
+function ov(){checks();const v=mdl(PXS()[S.sc]),cf=conf(),r=l=>RV[l][9],col=u=>u>S.th?'var(--good)':u<-S.th?'var(--bad)':'var(--c2)',vt=u=>u>S.th?'Undervalued':u<-S.th?'Overvalued':'Fairly valued';
+kp('#kO',[['Current price (₹)',f(px(),'n')],['Market cap (₹ Cr)',META.mcap?f(META.mcap,'n'):'N/A'],['Latest sales (₹ Cr)',f(D.Sales[9],'n')],['Latest net profit (₹ Cr)',f(D.NP[9],'n')],['ROE (avg equity)',f(r('ROE'),'p')],['ROA (avg assets)',f(r('ROA'),'p')],['Debt / Equity',f(r('Debt / Equity (x)'),'x')],['EPS (₹)',f(r('EPS (₹)'),'r')],['Book value / share (₹)',f(r('BVPS (₹)'),'r')],['Fair value / share (₹)',f(v.fair,'n')],['Upside / (downside)',f(v.up,'p')],['Method',META.fin?'Residual Income':'FCFF DCF']]);
+$('#vO').innerHTML=`<span class="pill" style="background:${col(v.up)}">${vt(v.up)}</span> <b>${f(v.up,'p')}</b> vs market · ${SN[S.sc]} case<p class="mut">Fair value ₹${f(v.fair,'n')} vs price ₹${f(px(),'n')}. Rule: upside above +${f(S.th,'p')} = Undervalued; below −${f(S.th,'p')} = Overvalued; otherwise Fairly valued. A model output, not a recommendation.</p>`;$('#thv').textContent=f(S.th,'p');
+$('#hO').innerHTML=`<p><b>Data quality:</b> ${HLT.dq} (${f(HLT.cp,'p')} complete)<br><b>Model health:</b> ${HLT.mh}${HLT.bad?' – valuation could not be fully calculated (check shares outstanding and price)':''}<br><b>Valuation confidence:</b> ${cf.lv}</p><p class="mut">${cf.txt}</p>`;
+$('#tO').innerHTML=obs().map(x=>'<li>'+x+'</li>').join('');const [st,rk]=sr();$('#sO').innerHTML=st.map(x=>'<li>'+x+'</li>').join('');$('#rO').innerHTML=rk.map(x=>'<li>'+x+'</li>').join('');
+const V=PXS().map(mdl);mk('cO1','bar',{labels:SN,datasets:[{label:'Fair value ₹/share',data:V.map(x=>x.fair),backgroundColor:SC,borderRadius:6},{type:'line',label:'Market price',data:SN.map(_=>px()),borderColor:PAL[3],borderDash:[6,4],pointRadius:0}]});
+const chg=(name,a,t,kind)=>{if(!a)return`<tr><td>${name}</td><td colspan="4">N/A – not available in uploaded data</td></tr>`;const p=a[8],c=a[9];let d=null,ds='n/a';if(t=='p'&&p!=null&&c!=null){d=c-p;ds=(d>=0?'+':'')+(d*100).toFixed(1)+' pp'}else if(t!='p'&&p>0&&c!=null){d=c/p-1;ds=(d>=0?'+':'')+(d*100).toFixed(1)+'%'}
+const flat=d==null||Math.abs(d)<(t=='p'?.001:.005),st2=flat?'Neutral':kind=='g'?(d>0?'Positive':'Negative'):kind=='c'?'Context-dependent':'Neutral';return`<tr><td>${name}</td><td>${fv(p,t)}</td><td>${fv(c,t)}</td><td class="${st2=='Positive'?'up':st2=='Negative'?'dn':''}">${flat?'■':d>0?'▲':'▼'} ${ds}</td><td>${st2}${d==null?' – insufficient data':flat?' – little changed':d>0?' – increased':' – decreased'}</td></tr>`};
+$('#wO').innerHTML='<tr><th>Metric</th><th>FY'+String(Y[8]).slice(2)+'</th><th>FY'+String(Y[9]).slice(2)+'</th><th>Change</th><th>Interpretation</th></tr>'+[['Revenue',D.Sales,'n','g'],['Net profit',D.NP,'n','g'],['Profit before tax',D.PBT,'n','g'],['PAT margin',RV['PAT Margin'],'p','g'],['EBIT margin',RV['EBIT Margin'],'p','g'],['ROE',RV.ROE,'p','g'],['ROA',RV.ROA,'p','g'],['Borrowings',D.Borrow,'n','c'],['Debt / Equity',RV['Debt / Equity (x)'],'x','c'],['Cash from operations',D.CFO,'n','g'],['EPS (₹)',RV['EPS (₹)'],'r','g'],['BVPS (₹)',RV['BVPS (₹)'],'r','g'],['Share price',D.Price,'r','n']].map(a=>chg(...a)).join('');
+$('#mO').innerHTML='<tr><th>Check</th><th>Status</th><th>Detail</th></tr>'+CHK.map(x=>`<tr><td>${x.name}</td><td class="${x.st=='Pass'?'up':x.st=='Warning'?'dn':''}">${x.st=='Pass'?'✓ ':x.st=='Warning'?'⚠ ':''}${x.st}</td><td style="text-align:left;white-space:normal">${x.det}</td></tr>`).join('');
+$('#lO').innerHTML='<tr><th>Metric</th><th>Source sheet</th><th>Row</th><th>Latest period</th><th>Latest value</th></tr>'+KEYS.map(([k,l])=>LIN[k]?`<tr><td>${l.replace(':','')}</td><td>${LIN[k].sheet}</td><td>${LIN[k].row}</td><td>FY${String(Y[9]).slice(2)}</td><td>${f(D[k][9],k=='Price'||k=='Shares'?'r':'n')}</td></tr>`:`<tr><td>${l.replace(':','')}</td><td colspan="4">N/A – not available in uploaded data</td></tr>`).join('');dq()}
+function mx(){const fin=META.fin,cur=PXS()[S.sc],ds=[-.02,-.01,0,.01,.02],gs=[-.01,-.005,0,.005,.01],kb=fin?cur.rf+cur.beta*cur.erp:cur.w,fx=(d,g)=>fin?val({...cur,rf:cur.rf+d,gt:cur.gt+g}).fair:fval({...cur,w:cur.w+d,gt:cur.gt+g}).fair;
+$('#mxA').innerHTML=`<tr><th>${fin?'Cost of equity':'WACC'} ↓ / Terminal growth →</th>${gs.map(g=>`<th>${f(cur.gt+g,'p')}</th>`).join('')}</tr>`+ds.map(d=>`<tr><td>${f(kb+d,'p')}</td>${gs.map(g=>{const z=fx(d,g),up=z/px()-1,ok=isFinite(z)&&z>0,bg=!ok?'':up>S.th?'rgba(13,148,136,.2)':up<-S.th?'rgba(225,29,72,.14)':'rgba(37,99,235,.1)';return`<td title="Discount rate ${f(kb+d,'p')} · Terminal growth ${f(cur.gt+g,'p')} · Fair value ₹${ok?z.toFixed(2):'n/a'}${ok?' · '+f(up,'p')+' vs price':''}" style="background:${bg};${d==0&&g==0?'outline:2px solid var(--c2);outline-offset:-2px':''}">${ok?'₹'+f(z,'n')+'<br><small>'+(up>=0?'▲ +':'▼ ')+f(up,'p').replace('-','')+'</small>':'n/a'}</td>`}).join('')}</tr>`).join('')}
+function hw(){const fin=META.fin,cur=PXS()[S.sc],v=mdl(cur),A='FY'+String(Y[9]).slice(2)+'A',E=fe(1)+'–'+fe(5),sd=sh().toFixed(2)+' Cr (adjusted)';
+const li=fin?[['Historical base year',A+' (actual); forecast '+E],['Opening book value','₹'+f(v.bv0,'n')+' Cr (equity capital + reserves, '+A+')'],['ROE path','Latest ROE '+f(RV.ROE[9],'p')+(cur.shift>=0?' + ':' − ')+f(Math.abs(cur.shift),'p')+' shift, fading linearly to '+f(cur.target,'p')],['Book value growth',f(cur.bg,'p')+' p.a.'],['Cost of equity','risk-free '+f(cur.rf,'p')+' + beta '+cur.beta.toFixed(2)+' × premium '+f(cur.erp,'p')+' = '+f(v.ke,'p')],['Residual income','Net income − Ke × opening book value; discounted at Ke'],['Terminal value','(Target ROE − Ke) × BV(Yr 5) ÷ (Ke − g), g = '+f(cur.gt,'p')],['Net debt adjustment','Not applied – equity-based method'],['Shares outstanding',sd],['Equity value','₹'+f(v.eq,'n')+' Cr'],['Fair value per share','₹'+f(v.fair,'n')]]:[['Historical base year',A+' (actual); forecast '+E],['Revenue growth',f(cur.g,'p')+' p.a.'],['EBIT margin','Latest '+f(v.m0,'p')+(cur.m>=0?' + ':' − ')+f(Math.abs(cur.m),'p')+' = '+f(v.m0+cur.m,'p')],['Tax rate',f(v.tax,'p')+' (latest effective, clamped 15–35%)'],['D&A','Latest '+f(v.dap,'p')+' of sales'],['Capex / working capital','Capex = 1.2× D&A; ΔNWC = 5% of incremental revenue (model assumptions)'],['FCFF','NOPAT + D&A − Capex − ΔNWC'],['Discount rate (WACC)',f(cur.w,'p')],['Terminal value','FCFF(Yr 5) × (1+g) ÷ (WACC − g), g = '+f(cur.gt,'p')],['Enterprise value','₹'+f(v.ev,'n')+' Cr'],['Net debt','Borrowings − cash = ₹'+f(v.nd,'n')+' Cr'],['Shares outstanding',sd],['Equity value','₹'+f(v.eq,'n')+' Cr'],['Fair value per share','₹'+f(v.fair,'n')]];
+$('#hwA').innerHTML='<table>'+li.map(x=>`<tr><td>${x[0]}</td><td style="text-align:left;white-space:normal">${x[1]}</td></tr>`).join('')+'</table>'}
+const LK=k=>LIN[k]?`${LIN[k].sheet}, row ${LIN[k].row}`:'n/a';
+function asm(){const fin=META.fin,PX=PXS(),DF=DFS(),H=fin?{rf:['—','Market input (user assumption)'],beta:['—','User assumption'],erp:['—','User assumption'],bg:['Net worth CAGR 5y '+f(cagr(RV['Net Worth (₹ Cr)']),'p'),'Historical reference + user view'],shift:['Latest ROE '+f(RV.ROE[9],'p'),'Applied to latest actual ROE'],target:['Avg ROE '+f(avg(RV.ROE),'p'),'User assumption'],gt:['—','User assumption']}:{g:['Sales CAGR 5y '+f(cagr(D.Sales),'p')+'; latest '+f(RV['Sales Growth'][9],'p'),'Scaled from history (60% of CAGR, capped 4–20%)'],m:['Latest EBIT margin '+f(RV['EBIT Margin'][9],'p'),'Shift applied to latest actual'],w:['—','User assumption'],gt:['—','User assumption']};
+$('#asm').innerHTML='<tr><th>Assumption</th><th>Historical reference</th>'+SN.map(n=>'<th>'+n+'</th>').join('')+'<th>Basis</th></tr>'+DF.map(d=>`<tr style="cursor:pointer" onclick="aud('${d[0]}')"><td>${d[1]} ⓘ</td><td style="text-align:left">${H[d[0]][0]}</td>${PX.map(p=>`<td>${d[2]=='p'?f(p[d[0]],'p'):p[d[0]].toFixed(2)}</td>`).join('')}<td style="text-align:left;white-space:normal">${H[d[0]][1]}</td></tr>`).join('')}
+function aud(k){const d=DFS().find(x=>x[0]==k),p=PXS()[S.sc],src={bg:['EqCap','Reserves'],shift:['NP','EqCap','Reserves'],target:['NP','EqCap','Reserves'],g:['Sales'],m:['PBT','Interest','OtherInc','Sales']}[k]||[];$('#ad').style.display='block';$('#ad').innerHTML=`<b>${d[1]}</b> – active scenario (${SN[S.sc]}) value <b>${d[2]=='p'?f(p[k],'p'):p[k].toFixed(2)}</b>. ${src.length?'Historical inputs from uploaded workbook: '+src.map(x=>x+' ('+LK(x)+')').join('; ')+'.':'This is a user/market assumption, not a reported figure.'} Edit it with the slider on the left; all valuation outputs recalculate.`}
+function gseek(){const T=+$('#gsT').value,cur={...PXS()[S.sc]},fin=META.fin,kb=fin?cur.rf+cur.beta*cur.erp:cur.w;
+const solve=(fn,lo,hi)=>{let a=fn(lo)-T;const b=fn(hi)-T;if(!isFinite(a)||!isFinite(b)||a*b>0)return null;for(let i=0;i<80;i++){const m=(lo+hi)/2,fm=fn(m)-T;if(a*fm<=0)hi=m;else{lo=m;a=fm}}return(lo+hi)/2};
+const rate=solve(x=>fin?val({...cur,rf:x-cur.beta*cur.erp}).fair:fval({...cur,w:x}).fair,Math.max(cur.gt+.006,.04),.25),tg=solve(x=>fin?val({...cur,gt:x}).fair:fval({...cur,gt:x}).fair,0,Math.min(kb-.006,.09));
+$('#gsR').innerHTML=`To reach ₹${f(T,'n')}: ${rate==null?'no discount rate between 4% and 25% achieves it':`<b>${fin?'cost of equity':'WACC'} = ${f(rate,'p')}</b> (now ${f(kb,'p')})`}; ${tg==null?'no terminal growth in the allowed range achieves it':`<b>terminal growth = ${f(tg,'p')}</b> (now ${f(cur.gt,'p')})`}. Each solve holds all other inputs at the active scenario.`}
+function render(){renderA();renderB();renderC();ov();mx();hw();asm();const o=obs();$('#rptH').innerHTML=`<h1 style="margin:0">${META.name} – Financial Analysis Report</h1><div class="mut">${new Date().toLocaleDateString('en-IN')} · ${META.fin?'Financial institution – Residual Income valuation':'Operating company – FCFF DCF valuation'} · Prepared with HK.Finance</div>`;
+$('#rptF').innerHTML=`<h3>Key observations</h3><ul>${o.map(x=>'<li>'+x+'</li>').join('')}</ul><h3>Methodology</h3><p>Ratios use average balances where opening and closing figures exist. ${META.fin?'Residual Income: Value = BV0 + Σ(ROE−Ke)·BV(t−1)/(1+Ke)^t + terminal value.':'FCFF DCF: NOPAT + D&amp;A − Capex − ΔNWC discounted at WACC; equity = EV − net debt.'} Options use Black-Scholes-Merton with continuous dividend yield; volatility is annual, Vega is per 1% vol move.</p><h3>Disclaimer</h3><p>This analysis is generated for educational and analytical purposes based on the data and assumptions provided. It is not investment advice, a recommendation, or a guarantee of future performance. Users should independently verify information and consult a qualified professional where appropriate.</p>`}
+
+async function xl(sc){try{
+const wb=new ExcelJS.Workbook(),NV='FF1B2A41',Z={n:'"₹"#,##0',p:'0.0%',x:'0.00"x"',r:'"₹"#,##0.00'},FY=Y.map(y=>'FY'+String(y).slice(2)),zz=z=>Z[z]||z;
+const mkS=(nm,t,w)=>{const ws=wb.addWorksheet(nm,{views:[{showGridLines:false}]});ws.columns=w.map(x=>({width:x}));ws.getCell('A1').value=t;ws.getCell('A1').font={bold:true,size:16,color:{argb:NV}};ws.getCell('A2').value=META.name+' · generated by HK.Finance · ₹ Crore unless stated';ws.getCell('A2').font={italic:true,color:{argb:'FF5B6B7B'}};return ws};
+const hd=(ws,r,a)=>a.forEach((h,i)=>{const c=ws.getCell(r,i+1);c.value=h;c.font={bold:true,color:{argb:'FFFFFFFF'}};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:NV}};c.alignment={horizontal:i?'right':'left'}});
+const cv=(c,v,z)=>{c.value=typeof v=='string'?v:(v==null||!isFinite(v)?'n/a':v);if(typeof c.value=='number'&&z)c.numFmt=zz(z);c.alignment={horizontal:'right'}};
+const rw=(ws,r,l,vals,z)=>{ws.getCell(r,1).value=l;vals.forEach((v,i)=>cv(ws.getCell(r,i+2),v,Array.isArray(z)?z[i]:z))};
+const kv=(ws,r,k,v,z)=>{ws.getCell(r,1).value=k;ws.getCell(r,1).font={bold:true};cv(ws.getCell(r,2),v,z)};
+const neg=(ws,ref)=>ws.addConditionalFormatting({ref,rules:[{type:'cellIs',operator:'lessThan',formulae:[0],style:{font:{color:{argb:'FFE11D48'}}}}]});
+const fz=(ws,r)=>ws.views=[{state:'frozen',xSplit:1,ySplit:r,showGridLines:false}];
+const txt=(ws,r,t,n)=>{ws.mergeCells(r,1,r,n);const c=ws.getCell(r,1);c.value=t;c.alignment={wrapText:true,vertical:'top'};ws.getRow(r).height=32};
+const PX=PXS(),V=PX.map(mdl),v=V[S.sc],cur=PX[S.sc],DF=DFS(),b=bs(px()),vd=v.up>S.th?'Undervalued':v.up<-S.th?'Overvalued':'Fairly valued',r=l=>RV[l][9];
+let ws=mkS('01 Executive Summary','Executive Summary',[38,26,18]);
+[['Company',META.name],['Company type',META.fin?'Financial institution':'Operating company'],['Valuation method',META.fin?'Residual Income / Excess Return':'FCFF DCF'],['Active scenario',SN[S.sc]],['Market price',px(),'r'],['Market cap (₹ Cr)',META.mcap,'n'],['Fair value / share',v.fair,'r'],['Upside / (downside)',v.up,'p'],['Verdict',vd]].forEach((a,i)=>kv(ws,4+i,...a));
+hd(ws,14,['Latest fiscal year (FY'+String(Y[9]).slice(2)+')','Value']);
+[['Sales (₹ Cr)',D.Sales[9],'n'],['Net profit (₹ Cr)',D.NP[9],'n'],['ROE (average equity)',r('ROE'),'p'],['ROA (average assets)',r('ROA'),'p'],['PAT margin',r('PAT Margin'),'p'],['Debt / Equity',r('Debt / Equity (x)'),'x'],['Interest cover',r('Interest Cover (x)'),'x'],['EPS',r('EPS (₹)'),'r'],['BVPS',r('BVPS (₹)'),'r'],['P/E',r('P/E (x)'),'x'],['P/B',r('P/B (x)'),'x']].forEach((a,i)=>kv(ws,15+i,...a));
+hd(ws,27,['Key observations','','']);obs().forEach((t,i)=>txt(ws,28+i,t,3));
+ws=mkS('02 Valuation','Valuation – '+(META.fin?'Residual Income':'FCFF DCF')+' ('+SN[S.sc]+' case)',[34,16,16,16,16,16]);
+hd(ws,4,['₹ Cr (forecast)',...[1,2,3,4,5].map(fe)]);TR().forEach(([a,k,t],i)=>rw(ws,5+i,a,v.rows.map(x=>x[k]),t));let q=6+TR().length;neg(ws,'B5:F'+(q-2));
+hd(ws,q,['Valuation summary (₹ Cr)','Value']);SUM(v).forEach((a,i)=>kv(ws,q+1+i,a[0],a[1],'n'));q+=SUM(v).length+2;
+[['Fair value / share',v.fair,'r'],['Market price',px(),'r'],['Upside / (downside)',v.up,'p'],[META.fin?'Cost of equity':'WACC',v.ke,'p']].forEach((a,i)=>kv(ws,q+i,...a));q+=5;
+hd(ws,q,['Black-Scholes option (European)','Value']);[['Spot (₹)',px(),'r'],['Strike (₹)',S.K,'r'],['Maturity (years)',S.T,'0.00'],['Volatility (annual)',b.sg,'p'],['Risk-free rate',b.r,'p'],['Dividend yield',b.q,'p'],['Call value (₹)',b.c,'r'],['Put value (₹)',b.p,'r'],['Delta (call)',b.delta,'0.000'],['Gamma',b.gamma,'0.00000'],['Vega (₹ per 1% vol)',b.vega,'0.00'],['Theta, call (₹ per day)',b.thc,'0.000'],['Theta, put (₹ per day)',b.thp,'0.000'],['Rho, call (₹ per 1% rate)',b.rc,'0.000'],['Rho, put (₹ per 1% rate)',b.rp,'0.000']].forEach((a,i)=>kv(ws,q+1+i,...a));
+ws=mkS('03 Scenarios','Scenario analysis',[16,18,18,18,20,20,20,20]);
+hd(ws,4,['Scenario','Fair Value (₹)','Market Price (₹)','Upside/Downside',...DF.map(d=>d[1])]);V.forEach((x,i)=>rw(ws,5+i,SN[i],[x.fair,px(),x.up,...DF.map(d=>PX[i][d[0]])],['r','r','p',...DF.map(d=>d[2]=='p'?'p':'0.00')]));neg(ws,'D5:D7');
+ws=mkS('04 Performance','Performance ratios',[34,...Y.map(_=>12)]);hd(ws,4,['Ratio',...FY]);const RR=R.filter(x=>x[0]!='Log Return');RR.forEach(([l,,t],i)=>rw(ws,5+i,l,RV[l],t));fz(ws,4);neg(ws,'B5:K'+(4+RR.length));
+ws=mkS('05 Historical Data','Historical financials',[34,...Y.map(_=>13)]);hd(ws,4,['Item',...FY]);KEYS.forEach(([k,l],i)=>rw(ws,5+i,l.replace(':',''),D[k]||Array(10).fill(null),k=='Price'?'r':k=='Shares'?'#,##0.00':'n'));fz(ws,4);neg(ws,'B5:K'+(4+KEYS.length));
+ws=mkS('06 Charts Data','Chart series',[34,...Y.map(_=>13)]);hd(ws,4,['Series',...FY]);
+[['Sales',D.Sales,'n'],['Net profit',D.NP,'n'],...['Sales Growth','Net Profit Growth','ROE','ROA','EBITDA Margin','EBIT Margin','PAT Margin','Debt / Equity (x)','Equity Multiplier (x)','EPS (₹)','BVPS (₹)','P/E (x)'].map(l=>[l,RV[l],R.find(x=>x[0]==l)[2]]),['Share price',D.Price,'r'],['CFO',D.CFO,'n'],['CFI',D.CFI,'n'],['CFF',D.CFF,'n']].forEach(([l,a,z],i)=>rw(ws,5+i,l,a||Array(10).fill(null),z));fz(ws,4);
+ws=mkS('07 Assumptions','Assumptions & methodology',[40,18,18,18]);hd(ws,4,['Parameter',...SN]);DF.forEach((d,i)=>rw(ws,5+i,d[1],PX.map(p=>p[d[0]]),d[2]=='p'?'p':'0.00'));let a=7+DF.length;
+hd(ws,a,['Option inputs','Value']);[['Strike (₹)',S.K,'r'],['Maturity (years)',S.T,'0.00'],['Volatility used',b.sg,'p'],['Risk-free rate',b.r,'p'],['Dividend yield',b.q,'p']].forEach((x,i)=>kv(ws,a+1+i,...x));a+=8;
+['Ratios use average balances where opening and closing figures exist; first-year ROE/ROA are shown as n/a.',META.fin?'Residual Income: Value = BV0 + PV of (ROE − Ke) × opening BV + PV of terminal residual income.':'FCFF DCF: NOPAT + D&A − Capex (1.2× D&A) − ΔNWC (5% of incremental revenue) at WACC; equity = EV − net debt.','Black-Scholes-Merton with continuous dividend yield; volatility from historical annual log returns unless overridden.','For information only; not investment advice.'].forEach((t,i)=>txt(ws,a+i,t,4));
+ws=mkS('08 Model Checks','Model checks & health',[46,14,80]);hd(ws,4,['Check','Status','Detail']);CHK.forEach((x,i)=>{ws.getCell(5+i,1).value=x.name;ws.getCell(5+i,2).value=x.st;ws.getCell(5+i,3).value=x.det});kv(ws,6+CHK.length,'Data quality',HLT.dq);kv(ws,7+CHK.length,'Model health',HLT.mh);kv(ws,8+CHK.length,'Valuation confidence',conf().lv);
+const buf=await wb.xlsx.writeBuffer(),el=document.createElement('a');el.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));el.download=`HK-Finance_${META.name.replace(/\W+/g,'_')}_Results.xlsx`;el.click()}catch(e){$('#err').textContent='Export failed: '+e.message}}
+function pdf(p){$$('.pane').forEach(x=>x.style.display=(p=='all'||x.id=='p'+p)?'block':'none');document.body.dataset.p='1';Object.values(CH).forEach(c=>c.resize());window.onafterprint=()=>{$$('.pane').forEach(x=>x.style.display='');delete document.body.dataset.p;Object.values(CH).forEach(c=>c.resize())};setTimeout(()=>window.print(),450)}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function show(file){$('#err').textContent='';const buf=await file.arrayBuffer();
+try{parse(XLSX.read(buf,{type:'array'}));build()}catch(err){$('#err').textContent='Could not read this file: '+err.message;return}
+$('#hero').style.display='none';$('#app').style.display='none';const P=$('#proc');P.style.display='block';
+P.innerHTML='<h3>Analysing '+file.name+'</h3>'+['Reading workbook...','Detecting company...','Mapping financial data...','Calculating ratios...','Building valuation...','Preparing dashboard...'].map(t=>`<div class="st">${t}</div>`).join('')+'<div id="rdy" class="rdy"></div>';
+for(const e of $$('.st')){e.classList.add('cur');await sleep(360);e.classList.replace('cur','done');e.textContent='✓ '+e.textContent}
+$('#rdy').textContent='✓ Analysis Ready';await sleep(650);P.style.display='none';init()}
+function init(){Object.keys(DN).forEach(k=>delete DN[k]);$('#xC').innerHTML='';$('#app').style.display='block';
+$('#co').textContent=META.name;$('#meta').textContent=`${META.fin?'Financial institution':'Operating company'} · FY${Y[0]}–FY${Y[9]} · Price ₹${META.price} · Market cap ₹${Math.round(META.mcap).toLocaleString('en-IN')} Cr · Hist. vol ${f(META.hv,'p')}`;
+$('#sc').innerHTML=SN.map((n,i)=>`<button data-s="${i}" class="${i==1?'on':''}">${n}</button>`).join('');
+const slA=()=>sliders('#slA',DFS(),k=>PXS()[S.sc][k],(k,v)=>PXS()[S.sc][k]=v,(d,v)=>d[2]=='p'?f(v,'p'):v.toFixed(2));
+$$('#sc button').forEach(b=>b.onclick=()=>{S.sc=+b.dataset.s;$$('#sc button').forEach(x=>x.classList.toggle('on',x==b));slA();render()});slA();
+sliders('#slB',[['K','Strike (₹)','n',Math.round(META.price*.5),Math.round(META.price*1.6),1],['T','Maturity (years)','n',.25,3,.25],['vol','Volatility override (0 = historical)','p',0,1.2,.01],['po','Spot price override (0 = file price)','n',0,Math.round(META.price*2),1]],k=>S[k],(k,v)=>S[k]=v,(d,v)=>d[0]=='vol'?f(v,'p'):v.toLocaleString('en-IN'));$('#ctype').value=META.type;$('#ctype').onchange=e=>{META.type=e.target.value;META.fin=META.type!='op';slA();render()};$('#th').value=S.th;$('#th').oninput=e=>{S.th=+e.target.value;render()};$('#cp').value=S.cp;$('#cp').onchange=e=>{S.cp=e.target.value;renderB()};$('#gsT').value=Math.round(px());$('#gsB').onclick=gseek;render()}
+$('#f').onchange=e=>e.target.files[0]&&show(e.target.files[0]);
+$('#drop').ondragover=e=>e.preventDefault();$('#drop').ondrop=e=>{e.preventDefault();show(e.dataTransfer.files[0])};
+$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('on',x==t));$$('.pane').forEach(p=>p.classList.toggle('on',p.id=='p'+t.dataset.t))});
+$$('[data-x]').forEach(b=>b.onclick=()=>xl(b.dataset.x));$$('[data-p]').forEach(b=>b.onclick=()=>pdf(b.dataset.p));$('#xall').onclick=()=>xl('all');$('#pall').onclick=()=>pdf('all');$('#re').onclick=()=>{$('#app').style.display='none';$('#hero').style.display='block'};
+Chart.defaults.color='#1b2a41';Chart.defaults.borderColor='#e6edf3';Chart.defaults.font.family='system-ui,-apple-system,Segoe UI,Roboto,sans-serif';Chart.defaults.plugins.tooltip.backgroundColor='#1b2a41';Chart.defaults.plugins.tooltip.padding=10;
+</script></body></html>
